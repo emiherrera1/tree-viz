@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { 
+            margin: 0;
+            background: black;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+        .node text {
+            font: 8px Arial;
+            fill: white;
+            letter-spacing: 0.5px;
+            user-select: none;
+            transition: font-size 0.2s;
+        }
+        .node circle {
+            transition: r 0.2s, fill 0.2s;
+        }
+        .link {
+            transition: stroke-opacity 0.2s, stroke-width 0.2s;
+        }
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            background: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #eee;
+        }
+        #tooltip {
+            position: absolute;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .path-highlight {
+            stroke: #4CAF50 !important;
+            stroke-opacity: 1 !important;
+            stroke-width: 1.5 !important;
+        }
+        .node-highlight circle {
+            fill: #4CAF50 !important;
+            r: 3 !important;
+        }
+        .node-highlight text {
+            fill: #4CAF50 !important;
+            font-size: 10px !important;
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+<div id="tooltip"></div>
+<div class="controls">
+    <button onclick="zoomIn()">+</button>
+    <button onclick="zoomOut()">-</button>
+    <button onclick="resetZoom()">Reset</button>
+</div>
+<script>
+const width = Math.min(window.innerWidth, window.innerHeight);
+const height = width;
+const radius = width / 2.2;
+
+let currentTransform = d3.zoomIdentity;
+
+const tree = d3.tree()
+    .size([2 * Math.PI, radius * 0.9])
+    .separation((a, b) => (a.parent == b.parent ? 1.5 : 2) / a.depth);
+
+const svg = d3.select("body").append("svg")
+    .attr("viewBox", [-width/2, -height/2, width, height])
+    .style("background", "black");
+
+const g = svg.append("g");
+
+// Initialize zoom behavior
+const zoom = d3.zoom()
+    .scaleExtent([0.1, 4])
+    .on("zoom", (event) => {
+        currentTransform = event.transform;
+        g.attr("transform", event.transform);
+    });
+
+svg.call(zoom);
+
+function zoomIn() {
+    svg.transition().duration(750).call(zoom.scaleBy, 1.5);
+}
+
+function zoomOut() {
+    svg.transition().duration(750).call(zoom.scaleBy, 0.75);
+}
+
+function resetZoom() {
+    svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+}
+
+// Function to highlight path to root
+function highlightPathToRoot(node) {
+    // Reset all links and nodes
+    d3.selectAll(".link").classed("path-highlight", false);
+    d3.selectAll(".node").classed("node-highlight", false);
+
+    // Highlight the current node and its path to root
+    let current = node;
+    while (current.parent) {
+        // Highlight the current node
+        d3.select(current.nodeElement).classed("node-highlight", true);
+        
+        // Highlight the link to parent
+        d3.selectAll(".link")
+            .filter(d => d.source === current.parent && d.target === current)
+            .classed("path-highlight", true);
+        
+        current = current.parent;
+    }
+    // Highlight root node
+    d3.select(current.nodeElement).classed("node-highlight", true);
+}
+
+d3.json("tree_data.json").then(data => {
+    const root = tree(d3.hierarchy(data));
+
+    // Add links
+    const links = g.append("g")
+        .selectAll("path")
+        .data(root.links())
+        .join("path")
+        .attr("class", "link")
+        .attr("fill", "none")
+        .attr("stroke", "white")
+        .attr("stroke-opacity", 0.4)
+        .attr("stroke-width", 0.5)
+        .attr("d", d3.linkRadial()
+            .angle(d => d.x)
+            .radius(d => d.y));
+
+    // Add nodes
+    const nodes = g.append("g")
+        .selectAll("g")
+        .data(root.descendants())
+        .join("g")
+        .attr("class", "node")
+        .attr("transform", d => `
+            rotate(${d.x * 180 / Math.PI - 90})
+            translate(${d.y},0)
+        `);
+
+    // Store the DOM element reference
+    nodes.each(function(d) {
+        d.nodeElement = this;
+    });
+
+    // Add circles to nodes
+    nodes.append("circle")
+        .attr("fill", "white")
+        .attr("r", 1.5);
+
+    // Add text labels
+    nodes.append("text")
+        .attr("dy", "0.31em")
+        .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
+        .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
+        .attr("transform", d => d.x >= Math.PI ? "rotate(180)" : null)
+        .text(d => d.data.name)
+        .on("mouseover", function(event, d) {
+            // Show tooltip
+            const tooltip = d3.select("#tooltip");
+            tooltip.style("opacity", 1)
+                .html(`
+                    <strong>${d.data.name}</strong><br>
+                    Depth: ${d.depth}<br>
+                    ${d.children ? `Children: ${d.children.length}` : 'Leaf node'}
+                `)
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 10) + "px");
+
+            // Highlight path
+            highlightPathToRoot(d);
+        })
+        .on("mouseout", function(event, d) {
+            // Hide tooltip
+            d3.select("#tooltip").style("opacity", 0);
+            
+            // Reset highlights
+            d3.selectAll(".link").classed("path-highlight", false);
+            d3.selectAll(".node").classed("node-highlight", false);
+        })
+        .on("click", function(event, d) {
+            // Prevent event from bubbling up
+            event.stopPropagation();
+
+            // Calculate the new transform to center on the clicked node
+            const scale = 2;
+            const x = -d.y * Math.cos((d.x - Math.PI/2));
+            const y = -d.y * Math.sin((d.x - Math.PI/2));
+            
+            svg.transition()
+                .duration(750)
+                .call(zoom.transform, 
+                    d3.zoomIdentity
+                        .translate(width/2, height/2)
+                        .scale(scale)
+                        .translate(x, y)
+                );
+        });
+
+    // Center the visualization initially
+    const initialTransform = d3.zoomIdentity
+        .translate(width/2, height/2)
+        .scale(0.8);
+    svg.call(zoom.transform, initialTransform);
+});
+</script>
+</body>
+</html>
