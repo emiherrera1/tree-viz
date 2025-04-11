@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,13 +23,35 @@
             fill: white;
             letter-spacing: 0.5px;
             user-select: none;
-            transition: font-size 0.2s;
+            transition: font-size 0.2s, font-weight 0.2s;
+        }
+        .node[data-depth="0"] text {
+            font: bold 16px Arial;
+            letter-spacing: 1.2px;
+            fill: #4CAF50;
         }
         .node circle {
+            fill: white;
             transition: r 0.2s, fill 0.2s;
         }
+        .node:hover circle {
+            r: 3;
+        }
+        .node:hover text {
+            font-weight: bold;
+            font-size: 10px;
+        }
         .link {
+            fill: none;
+            stroke: white;
+            stroke-opacity: 0.4;
+            stroke-width: 0.5;
             transition: stroke-opacity 0.2s, stroke-width 0.2s;
+        }
+        .link[data-to-root="true"] {
+            stroke: #4CAF50;
+            stroke-width: 1;
+            stroke-opacity: 0.6;
         }
         .controls {
             position: fixed;
@@ -41,32 +62,36 @@
             border-radius: 5px;
             display: flex;
             gap: 10px;
+            backdrop-filter: blur(5px);
         }
         button {
             background: white;
             border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
+            padding: 8px 15px;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
         }
         button:hover {
             background: #eee;
         }
         #tooltip {
             position: absolute;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.95);
             color: black;
-            border-radius: 4px;
-            font-size: 12px;
+            border-radius: 6px;
+            font-size: 14px;
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .path-highlight {
-            stroke: #4CAF50 !important;
-            stroke-opacity: 1 !important;
-            stroke-width: 1.5 !important;
+            stroke: #4CAF50;
+            stroke-opacity: 1;
+            stroke-width: 1.5;
         }
         .node-highlight circle {
             fill: #4CAF50 !important;
@@ -77,26 +102,101 @@
             font-size: 10px !important;
             font-weight: bold;
         }
+        .node-selected circle {
+            fill: #4CAF50 !important;
+            r: 3 !important;
+        }
+        .node-selected text {
+            fill: #4CAF50 !important;
+            font-size: 10px !important;
+            font-weight: bold;
+        }
+        .link-selected {
+            stroke: #4CAF50 !important;
+            stroke-opacity: 1 !important;
+            stroke-width: 1.5 !important;
+        }
+        .layer-summary {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            background: black;
+            border: 2px solid white;
+            border-radius: 8px;
+            padding: 15px;
+            color: white;
+            font-family: Arial, sans-serif;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            max-width: 300px;
+            z-index: 1000;
+        }
+        .layer-box {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            padding: 5px;
+        }
+        .layer-box::before {
+            content: '';
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: white;
+            margin-right: 10px;
+        }
+        .layer-box:not(:last-child) {
+            border-left: 2px solid white;
+            margin-left: 10px;
+            padding-left: 20px;
+        }
+
+        .layer-box.selected {
+        color: #4CAF50;
+        font-weight: bold;
+         }
+    
+    .layer-box.selected::before {
+        background: #4CAF50;
+         } 
     </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
 <div id="tooltip"></div>
+<div id="layerSummary" class="layer-summary"></div>
 <div class="controls">
     <button onclick="zoomIn()">+</button>
-    <button onclick="zoomOut()">-</button>
+    <button onclick="zoomOut()">−</button>
     <button onclick="resetZoom()">Reset</button>
 </div>
 <script>
 const width = Math.min(window.innerWidth, window.innerHeight);
 const height = width;
-const radius = width / 2.2;
+const radius = width / 1.3;
 
 let currentTransform = d3.zoomIdentity;
 
 const tree = d3.tree()
-    .size([2 * Math.PI, radius * 0.9])
-    .separation((a, b) => (a.parent == b.parent ? 1.5 : 2) / a.depth);
+    .size([2 * Math.PI, radius * 0.98])
+    .separation((a, b) => {
+        if (a.depth === 0) {
+            return (a.parent == b.parent ? 10 : 12);
+        } else if (a.depth === 1) {
+            return (a.parent == b.parent ? 8 : 9);
+        } else if (a.depth === 2) {
+            return (a.parent == b.parent ? 7 : 8);
+        } else if (a.depth === 3) {
+            return (a.parent == b.parent ? 6 : 7);
+        } else if (a.depth === 4) {
+            return (a.parent == b.parent ? 5 : 6);
+        } else if (a.depth === 5) {
+            return (a.parent == b.parent ? 4.5 : 5);
+        } else {
+            return (a.parent == b.parent ? 3.5 : 4);
+        }
+    });
 
 const svg = d3.select("body").append("svg")
     .attr("viewBox", [-width/2, -height/2, width, height])
@@ -104,9 +204,8 @@ const svg = d3.select("body").append("svg")
 
 const g = svg.append("g");
 
-// Initialize zoom behavior
 const zoom = d3.zoom()
-    .scaleExtent([0.1, 4])
+    .scaleExtent([0.1, 8])
     .on("zoom", (event) => {
         currentTransform = event.transform;
         g.attr("transform", event.transform);
@@ -115,132 +214,218 @@ const zoom = d3.zoom()
 svg.call(zoom);
 
 function zoomIn() {
-    svg.transition().duration(750).call(zoom.scaleBy, 1.5);
+    svg.transition()
+        .duration(750)
+        .ease(d3.easeQuadOut)
+        .call(zoom.scaleBy, 1.5);
 }
 
 function zoomOut() {
-    svg.transition().duration(750).call(zoom.scaleBy, 0.75);
+    svg.transition()
+        .duration(750)
+        .ease(d3.easeQuadOut)
+        .call(zoom.scaleBy, 0.75);
 }
 
 function resetZoom() {
-    svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+    svg.transition()
+        .duration(1000)
+        .ease(d3.easeQuadOut)
+        .call(zoom.transform, 
+            d3.zoomIdentity
+                .translate(0, 0)
+                .scale(0.4)
+        );
+    clearSelection();
+    d3.select("#layerSummary").style("opacity", 0);
 }
 
-// Function to highlight path to root
+function clearSelection() {
+    d3.selectAll(".node-selected").classed("node-selected", false);
+    d3.selectAll(".link-selected").classed("link-selected", false);
+}
+
 function highlightPathToRoot(node) {
-    // Reset all links and nodes
     d3.selectAll(".link").classed("path-highlight", false);
     d3.selectAll(".node").classed("node-highlight", false);
 
-    // Highlight the current node and its path to root
     let current = node;
     while (current.parent) {
-        // Highlight the current node
         d3.select(current.nodeElement).classed("node-highlight", true);
-        
-        // Highlight the link to parent
         d3.selectAll(".link")
             .filter(d => d.source === current.parent && d.target === current)
             .classed("path-highlight", true);
-        
         current = current.parent;
     }
-    // Highlight root node
     d3.select(current.nodeElement).classed("node-highlight", true);
 }
+
+function showTooltip(event, d) {
+    const tooltip = d3.select("#tooltip");
+    tooltip
+        .style("opacity", 1)
+        .html(`
+            <strong>${d.data.name}</strong><br>
+            <span style="color: #666;">Depth: ${d.depth}</span><br>
+            ${d.children ? 
+                `<span style="color: #4CAF50;">Children: ${d.children.length}</span>` : 
+                '<span style="color: #999;">Leaf node</span>'}
+        `)
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 10) + "px");
+
+    highlightPathToRoot(d);
+}
+
+function hideTooltip() {
+    d3.select("#tooltip").style("opacity", 0);
+    d3.selectAll(".link").classed("path-highlight", false);
+    d3.selectAll(".node").classed("node-highlight", false);
+}
+
+function focusNode(event, d) {
+    event.stopPropagation();
+
+    // Clear any existing selection
+    clearSelection();
+
+    // Add selection to clicked node
+    d3.select(d.nodeElement).classed("node-selected", true);
+
+    // Highlight the path to root
+    let current = d;
+    while (current.parent) {
+        d3.selectAll(".link")
+            .filter(link => link.source === current.parent && link.target === current)
+            .classed("link-selected", true);
+        current = current.parent;
+    }
+
+    // Show layer summary
+    const summary = d3.select("#layerSummary");
+    let summaryHtml = `<strong>Path to ${d.data.name}:</strong><br>`;
+    
+    const path = [];
+    current = d;
+    while (current) {
+        path.unshift(current);
+        current = current.parent;
+    }
+    
+    path.forEach((node, i) => {
+        const isLastLayer = i === path.length - 1;  // Check if it's the clicked node's layer
+        summaryHtml += `
+            <div class="layer-box ${isLastLayer ? 'selected' : ''}">
+                Layer ${i + 1}: ${node.data.name}
+            </div>
+        `;
+    });
+    
+    summary
+        .html(summaryHtml)
+        .style("opacity", 1);
+
+    // Improved zoom to node
+    const scale = 4;
+    
+    // Calculate position based on node's angle and radius
+    const angle = d.x - Math.PI / 2;
+    
+    // Adjust the centering based on which side of the circle we're on
+    const isRightSide = d.x < Math.PI;
+    
+    // Calculate base position
+    let x = -d.y * Math.cos(angle);
+    let y = -d.y * Math.sin(angle);
+    
+    // Add directional offset based on which side we're on
+    const offsetMagnitude = width * 0.15;
+    const offsetX = isRightSide ? 
+        offsetMagnitude * Math.cos(angle) : 
+        -offsetMagnitude * Math.cos(angle);
+    const offsetY = isRightSide ? 
+        offsetMagnitude * Math.sin(angle) : 
+        -offsetMagnitude * Math.sin(angle);
+    
+    svg.transition()
+        .duration(1000)
+        .ease(d3.easeQuadOut)
+        .call(zoom.transform, 
+            d3.zoomIdentity
+                .translate(width/2 - offsetX, height/2 - offsetY)
+                .scale(scale)
+                .translate(x, y)
+        );
+}
+
+// Hide summary and clear selection when clicking empty space
+svg.on("click", () => {
+    clearSelection();
+    d3.select("#layerSummary").style("opacity", 0);
+});
 
 d3.json("tree_data.json").then(data => {
     const root = tree(d3.hierarchy(data));
 
-    // Add links
     const links = g.append("g")
         .selectAll("path")
         .data(root.links())
         .join("path")
         .attr("class", "link")
-        .attr("fill", "none")
-        .attr("stroke", "white")
-        .attr("stroke-opacity", 0.4)
-        .attr("stroke-width", 0.5)
+        .attr("data-to-root", d => d.source.depth === 0)
         .attr("d", d3.linkRadial()
             .angle(d => d.x)
             .radius(d => d.y));
 
-    // Add nodes
     const nodes = g.append("g")
         .selectAll("g")
         .data(root.descendants())
         .join("g")
         .attr("class", "node")
+        .attr("data-depth", d => d.depth)
         .attr("transform", d => `
             rotate(${d.x * 180 / Math.PI - 90})
             translate(${d.y},0)
         `);
 
-    // Store the DOM element reference
     nodes.each(function(d) {
         d.nodeElement = this;
     });
 
-    // Add circles to nodes
     nodes.append("circle")
-        .attr("fill", "white")
-        .attr("r", 1.5);
+        .attr("r", d => d.depth === 0 ? 0 : 1.5);
 
-    // Add text labels
     nodes.append("text")
         .attr("dy", "0.31em")
-        .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
-        .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
-        .attr("transform", d => d.x >= Math.PI ? "rotate(180)" : null)
+        .attr("x", d => {
+            if (d.depth === 0) {
+                return 0;
+            }
+            return d.x < Math.PI === !d.children ? 10 : -10;
+        })
+        .attr("text-anchor", d => {
+            if (d.depth === 0) {
+                return "middle";
+            }
+            return d.x < Math.PI === !d.children ? "start" : "end";
+        })
+        .attr("transform", d => {
+            if (d.depth === 0) {
+                return `rotate(${-1 * (d.x * 180 / Math.PI - 90)})`;
+            }
+            return d.x >= Math.PI ? "rotate(180)" : null;
+        })
         .text(d => d.data.name)
-        .on("mouseover", function(event, d) {
-            // Show tooltip
-            const tooltip = d3.select("#tooltip");
-            tooltip.style("opacity", 1)
-                .html(`
-                    <strong>${d.data.name}</strong><br>
-                    Depth: ${d.depth}<br>
-                    ${d.children ? `Children: ${d.children.length}` : 'Leaf node'}
-                `)
-                .style("left", (event.pageX + 10) + "px")
-                .style("top", (event.pageY - 10) + "px");
+        .on("mouseover", showTooltip)
+        .on("mouseout", hideTooltip)
+        .on("click", focusNode);
 
-            // Highlight path
-            highlightPathToRoot(d);
-        })
-        .on("mouseout", function(event, d) {
-            // Hide tooltip
-            d3.select("#tooltip").style("opacity", 0);
-            
-            // Reset highlights
-            d3.selectAll(".link").classed("path-highlight", false);
-            d3.selectAll(".node").classed("node-highlight", false);
-        })
-        .on("click", function(event, d) {
-            // Prevent event from bubbling up
-            event.stopPropagation();
-
-            // Calculate the new transform to center on the clicked node
-            const scale = 2;
-            const x = -d.y * Math.cos((d.x - Math.PI/2));
-            const y = -d.y * Math.sin((d.x - Math.PI/2));
-            
-            svg.transition()
-                .duration(750)
-                .call(zoom.transform, 
-                    d3.zoomIdentity
-                        .translate(width/2, height/2)
-                        .scale(scale)
-                        .translate(x, y)
-                );
-        });
-
-    // Center the visualization initially
-    const initialTransform = d3.zoomIdentity
-        .translate(width/2, height/2)
-        .scale(0.8);
-    svg.call(zoom.transform, initialTransform);
+    const initialScale = 0.4;
+    svg.call(zoom.transform, 
+        d3.zoomIdentity
+            .translate(0, 0)
+            .scale(initialScale)
+    );
 });
 </script>
 </body>
