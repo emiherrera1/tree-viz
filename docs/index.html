@@ -78,7 +78,153 @@
         background: rgba(255, 255, 255, 0.2);
     }
     .depth-btn.active {
-        background: #4CAF50;
+    
+    /* Modal Popup Styles */
+    .about-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2000;
+        display: none;
+    }
+    
+    .about-modal.open {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
+    }
+    
+    .modal-content {
+        position: relative;
+        background: rgba(0, 0, 0, 0.95);
+        border: 2px solid #4CAF50;
+        border-radius: 12px;
+        max-width: 600px;
+        max-height: 80vh;
+        width: 90%;
+        overflow-y: auto;
+        animation: modalSlideIn 0.3s ease-out;
+    }
+    
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8) translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 25px;
+        border-bottom: 1px solid #4CAF50;
+    }
+    
+    .modal-header h2 {
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0;
+    }
+    
+    .modal-close-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    
+    .modal-close-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .modal-body {
+        padding: 25px;
+        color: white;
+    }
+    
+    .about-section {
+        margin-bottom: 25px;
+    }
+    
+    .about-section h3 {
+        color: #4CAF50;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 0 0 12px 0;
+        border-bottom: 1px solid #4CAF50;
+        padding-bottom: 8px;
+    }
+    
+    .about-section p {
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 12px;
+    }
+    
+    .about-section ul {
+        margin: 12px 0;
+        padding-left: 20px;
+    }
+    
+    .about-section li {
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 6px;
+    }
+    
+    .about-section strong {
+        color: #4CAF50;
+        font-weight: bold;
+    }
+    
+    .about-modal-toggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        border: 2px solid #4CAF50;
+        padding: 10px 14px;
+        border-radius: 50%;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 1001;
+        transition: all 0.2s;
+        backdrop-filter: blur(5px);
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .about-modal-toggle:hover {
+        background: rgba(76, 175, 80, 0.2);
+        transform: scale(1.05);
+    }        background: #4CAF50;
         border-color: #4CAF50;
     }            position: fixed;
             bottom: 20px;
@@ -322,7 +468,60 @@
 </div>
 <div id="tooltip"></div>
 <div id="layerSummary" class="layer-summary"></div>
-<div class="controls">
+<button id="aboutModalToggle" class="about-modal-toggle">?</button>
+
+<div id="aboutModal" class="about-modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>About This Visualization</h2>
+            <button class="modal-close-btn">×</button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="about-section">
+                <h3>What is this?</h3>
+                <p>This is a radial tree visualization of the Content Terminal Niche Classification Standard (CTNCS). It shows the hierarchical structure of content categories and their relationships.</p>
+            </div>
+            
+            <div class="about-section">
+                <h3>How to Navigate</h3>
+                <ul>
+                    <li><strong>Zoom:</strong> Use the +, -, and Reset buttons to zoom in/out</li>
+                    <li><strong>Pan:</strong> Click and drag to move around the tree</li>
+                    <li><strong>Search:</strong> Use the search bar to find specific nodes</li>
+                    <li><strong>Click Nodes:</strong> Click any node to see its path and details</li>
+                </ul>
+            </div>
+            
+            <div class="about-section">
+                <h3>Depth Controls</h3>
+                <p>Use the "Show Levels" buttons to control how many levels of the tree are visible:</p>
+                <ul>
+                    <li><strong>1-2:</strong> Shows only the main categories (cleanest view)</li>
+                    <li><strong>1-3:</strong> Shows main categories and subcategories</li>
+                    <li><strong>1-4:</strong> Shows deeper levels of detail</li>
+                    <li><strong>All:</strong> Shows the complete tree (may be crowded)</li>
+                </ul>
+            </div>
+            
+            <div class="about-section">
+                <h3>Understanding the Tree</h3>
+                <ul>
+                    <li><strong>Green Center:</strong> Root "Content" node</li>
+                    <li><strong>White Circles:</strong> Category nodes</li>
+                    <li><strong>Gray Lines:</strong> Connections between categories</li>
+                    <li><strong>Text Labels:</strong> Category names</li>
+                </ul>
+            </div>
+            
+            <div class="about-section">
+                <h3>About CTNCS</h3>
+                <p>The Content Terminal Niche Classification Standard is a comprehensive taxonomy for understanding content categories and their relationships. It helps classify and organize the vast landscape of digital content.</p>
+            </div>
+        </div>
+    </div>
+</div><div class="controls">
     <button id="zoomInButton">+</button>
     <button id="zoomOutButton">−</button>
     <button id="resetButton">Reset</button>
@@ -392,7 +591,29 @@ const tree = d3.tree()
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up modal popup event listeners
+    const aboutModal = d3.select("#aboutModal");
+    const aboutModalToggle = d3.select("#aboutModalToggle");
+    
+    aboutModalToggle.on("click", function() {
+        aboutModal.classed("open", true);
+    });
+    
+    d3.select(".modal-close-btn").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    d3.select(".modal-overlay").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && aboutModal.classed("open")) {
+            aboutModal.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -438,7 +659,29 @@ const zoom = d3.zoom()
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up modal popup event listeners
+    const aboutModal = d3.select("#aboutModal");
+    const aboutModalToggle = d3.select("#aboutModalToggle");
+    
+    aboutModalToggle.on("click", function() {
+        aboutModal.classed("open", true);
+    });
+    
+    d3.select(".modal-close-btn").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    d3.select(".modal-overlay").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && aboutModal.classed("open")) {
+            aboutModal.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -734,7 +977,29 @@ function focusNode(event, d) {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up modal popup event listeners
+    const aboutModal = d3.select("#aboutModal");
+    const aboutModalToggle = d3.select("#aboutModalToggle");
+    
+    aboutModalToggle.on("click", function() {
+        aboutModal.classed("open", true);
+    });
+    
+    d3.select(".modal-close-btn").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    d3.select(".modal-overlay").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && aboutModal.classed("open")) {
+            aboutModal.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -848,7 +1113,29 @@ function searchNodes(query) {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up modal popup event listeners
+    const aboutModal = d3.select("#aboutModal");
+    const aboutModalToggle = d3.select("#aboutModalToggle");
+    
+    aboutModalToggle.on("click", function() {
+        aboutModal.classed("open", true);
+    });
+    
+    d3.select(".modal-close-btn").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    d3.select(".modal-overlay").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && aboutModal.classed("open")) {
+            aboutModal.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -890,7 +1177,29 @@ function searchNodes(query) {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up modal popup event listeners
+    const aboutModal = d3.select("#aboutModal");
+    const aboutModalToggle = d3.select("#aboutModalToggle");
+    
+    aboutModalToggle.on("click", function() {
+        aboutModal.classed("open", true);
+    });
+    
+    d3.select(".modal-close-btn").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    d3.select(".modal-overlay").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && aboutModal.classed("open")) {
+            aboutModal.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -966,7 +1275,29 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up modal popup event listeners
+    const aboutModal = d3.select("#aboutModal");
+    const aboutModalToggle = d3.select("#aboutModalToggle");
+    
+    aboutModalToggle.on("click", function() {
+        aboutModal.classed("open", true);
+    });
+    
+    d3.select(".modal-close-btn").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    d3.select(".modal-overlay").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && aboutModal.classed("open")) {
+            aboutModal.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1042,7 +1373,29 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up modal popup event listeners
+    const aboutModal = d3.select("#aboutModal");
+    const aboutModalToggle = d3.select("#aboutModalToggle");
+    
+    aboutModalToggle.on("click", function() {
+        aboutModal.classed("open", true);
+    });
+    
+    d3.select(".modal-close-btn").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    d3.select(".modal-overlay").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && aboutModal.classed("open")) {
+            aboutModal.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1086,7 +1439,29 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up modal popup event listeners
+    const aboutModal = d3.select("#aboutModal");
+    const aboutModalToggle = d3.select("#aboutModalToggle");
+    
+    aboutModalToggle.on("click", function() {
+        aboutModal.classed("open", true);
+    });
+    
+    d3.select(".modal-close-btn").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    d3.select(".modal-overlay").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && aboutModal.classed("open")) {
+            aboutModal.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1124,7 +1499,29 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up modal popup event listeners
+    const aboutModal = d3.select("#aboutModal");
+    const aboutModalToggle = d3.select("#aboutModalToggle");
+    
+    aboutModalToggle.on("click", function() {
+        aboutModal.classed("open", true);
+    });
+    
+    d3.select(".modal-close-btn").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    d3.select(".modal-overlay").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && aboutModal.classed("open")) {
+            aboutModal.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1165,7 +1562,29 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up modal popup event listeners
+    const aboutModal = d3.select("#aboutModal");
+    const aboutModalToggle = d3.select("#aboutModalToggle");
+    
+    aboutModalToggle.on("click", function() {
+        aboutModal.classed("open", true);
+    });
+    
+    d3.select(".modal-close-btn").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    d3.select(".modal-overlay").on("click", function() {
+        aboutModal.classed("open", false);
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && aboutModal.classed("open")) {
+            aboutModal.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
