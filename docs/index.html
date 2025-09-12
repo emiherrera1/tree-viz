@@ -328,6 +328,11 @@ const tree = d3.tree()
             return (a.parent == b.parent ? 2.5 : 3.5);
         }
     });
+    
+    // Set up zoom control button event listeners
+    d3.select("#zoomInButton").on("click", zoomIn);
+    d3.select("#zoomOutButton").on("click", zoomOut);
+    d3.select("#resetButton").on("click", resetZoom);
 
 const svg = d3.select("body").append("svg")
     .attr("viewBox", [-width/2, -height/2, width, height])
@@ -341,6 +346,11 @@ const zoom = d3.zoom()
         currentTransform = event.transform;
         g.attr("transform", event.transform);
     });
+    
+    // Set up zoom control button event listeners
+    d3.select("#zoomInButton").on("click", zoomIn);
+    d3.select("#zoomOutButton").on("click", zoomOut);
+    d3.select("#resetButton").on("click", resetZoom);
 
 svg.call(zoom);
 
@@ -472,6 +482,11 @@ function focusNode(event, d) {
         `;
     });
     
+    // Set up zoom control button event listeners
+    d3.select("#zoomInButton").on("click", zoomIn);
+    d3.select("#zoomOutButton").on("click", zoomOut);
+    d3.select("#resetButton").on("click", resetZoom);
+    
     // Add back button
     summaryHtml += `<button class="back-button" onclick="goBackToFullView()">← Back to Full View</button>`;
     
@@ -552,6 +567,11 @@ function searchNodes(query) {
                     d3.select("#searchResults").style("display", "none");
                     d3.select("#searchBox").property("value", "");
                 });
+    
+    // Set up zoom control button event listeners
+    d3.select("#zoomInButton").on("click", zoomIn);
+    d3.select("#zoomOutButton").on("click", zoomOut);
+    d3.select("#resetButton").on("click", resetZoom);
                 
             result.append("div")
                 .attr("class", "search-result-name")
@@ -561,6 +581,11 @@ function searchNodes(query) {
                 .attr("class", "search-result-path")
                 .text(getNodePath(node));
         });
+    
+    // Set up zoom control button event listeners
+    d3.select("#zoomInButton").on("click", zoomIn);
+    d3.select("#zoomOutButton").on("click", zoomOut);
+    d3.select("#resetButton").on("click", resetZoom);
     }
     
     d3.select("#searchResults").style("display", "block");
@@ -602,6 +627,11 @@ d3.json("tree_data.json").then(data => {
     nodes.each(function(d) {
         d.nodeElement = this;
     });
+    
+    // Set up zoom control button event listeners
+    d3.select("#zoomInButton").on("click", zoomIn);
+    d3.select("#zoomOutButton").on("click", zoomOut);
+    d3.select("#resetButton").on("click", resetZoom);
 
     nodes.append("circle")
         .attr("r", d => d.depth === 0 ? 0 : 1.5);
@@ -646,6 +676,11 @@ d3.json("tree_data.json").then(data => {
         searchNodes(this.value);
     });
     
+    // Set up zoom control button event listeners
+    d3.select("#zoomInButton").on("click", zoomIn);
+    d3.select("#zoomOutButton").on("click", zoomOut);
+    d3.select("#resetButton").on("click", resetZoom);
+    
     searchBox.on("keydown", function(event) {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -657,10 +692,20 @@ d3.json("tree_data.json").then(data => {
         }
     });
     
+    // Set up zoom control button event listeners
+    d3.select("#zoomInButton").on("click", zoomIn);
+    d3.select("#zoomOutButton").on("click", zoomOut);
+    d3.select("#resetButton").on("click", resetZoom);
+    
     searchButton.on("click", function() {
         const query = searchBox.property("value");
         searchNodes(query);
     });
+    
+    // Set up zoom control button event listeners
+    d3.select("#zoomInButton").on("click", zoomIn);
+    d3.select("#zoomOutButton").on("click", zoomOut);
+    d3.select("#resetButton").on("click", resetZoom);
     
     // Hide search results when clicking outside
     document.addEventListener("click", function(event) {
@@ -669,6 +714,11 @@ d3.json("tree_data.json").then(data => {
             d3.select("#searchResults").style("display", "none");
         }
     });
+    
+    // Set up zoom control button event listeners
+    d3.select("#zoomInButton").on("click", zoomIn);
+    d3.select("#zoomOutButton").on("click", zoomOut);
+    d3.select("#resetButton").on("click", resetZoom);
 });
 </script>
 </body>
