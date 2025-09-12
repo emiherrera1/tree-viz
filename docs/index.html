@@ -78,7 +78,177 @@
         background: rgba(255, 255, 255, 0.2);
     }
     .depth-btn.active {
+    
+    /* Book Info Panel Styles */
+    .book-info-panel {
+        position: fixed;
+        top: 0;
+        right: -400px;
+        width: 400px;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        border-left: 2px solid #4CAF50;
+        backdrop-filter: blur(10px);
+        transition: right 0.3s ease-in-out;
+        z-index: 1000;
+        overflow-y: auto;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    
+    .book-info-panel.open {
+        right: 0;
+    }
+    
+    .book-info-header {
+        margin-bottom: 30px;
+        border-bottom: 1px solid #4CAF50;
+        padding-bottom: 20px;
+    }
+    
+    .book-info-header h2 {
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0 0 10px 0;
+        line-height: 1.3;
+    }
+    
+    .document-id {
+        display: flex;
+        justify-content: space-between;
+        color: #4CAF50;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .book-graphic {
+        display: flex;
+        justify-content: center;
+        margin: 30px 0;
+    }
+    
+    .book-cover {
+        width: 120px;
+        height: 160px;
+        background: linear-gradient(145deg, #2d5a2d, #4CAF50);
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 15px;
+        position: relative;
+    }
+    
+    .book-title {
+        color: white;
+        font-size: 10px;
+        font-weight: bold;
+        text-align: center;
+        line-height: 1.2;
+    }
+    
+    .book-title div {
+        margin-bottom: 2px;
+    }
+    
+    .book-spine {
+        color: white;
+        font-size: 8px;
+        text-align: center;
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .publication-info {
+        text-align: center;
+        margin: 20px 0;
+    }
+    
+    .publication-type, .publication-source {
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .publication-details {
+        color: #4CAF50;
+        font-size: 12px;
+    }
+    
+    .book-description {
+        color: white;
+        font-size: 12px;
+        line-height: 1.5;
+        margin: 20px 0;
+    }
+    
+    .book-description p {
+        margin-bottom: 10px;
+    }
+    
+    .book-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+    }
+    
+    .get-book-btn {
+        flex: 1;
         background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    
+    .get-book-btn:hover {
+        background: #45a049;
+    }
+    
+    .close-panel-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    
+    .close-panel-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .book-info-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        border: 2px solid #4CAF50;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 18px;
+        cursor: pointer;
+        z-index: 1001;
+        transition: all 0.2s;
+        backdrop-filter: blur(5px);
+    }
+    
+    .book-info-toggle:hover {
+        background: rgba(76, 175, 80, 0.2);
+        transform: scale(1.05);
+    }        background: #4CAF50;
         border-color: #4CAF50;
     }            position: fixed;
             bottom: 20px;
@@ -322,7 +492,46 @@
 </div>
 <div id="tooltip"></div>
 <div id="layerSummary" class="layer-summary"></div>
-<div class="controls">
+<div id="bookInfoPanel" class="book-info-panel">
+    <div class="book-info-header">
+        <h2>Content Terminal Niche Classification Standard</h2>
+        <div class="document-id">
+            <span>SJ-485</span>
+            <span>34-94-28</span>
+        </div>
+    </div>
+    
+    <div class="book-info-content">
+        <div class="book-graphic">
+            <div class="book-cover">
+                <div class="book-title">
+                    <div>CONTENT NICHE</div>
+                    <div>CLASSIFICATION</div>
+                    <div>STANDARD</div>
+                </div>
+                <div class="book-spine">Content Terminal_</div>
+            </div>
+        </div>
+        
+        <div class="publication-info">
+            <div class="publication-type">Manual + Codebook</div>
+            <div class="publication-source">GitHub Repo</div>
+            <div class="publication-details">CTNCS, Hardcover, 2025</div>
+        </div>
+        
+        <div class="book-description">
+            <p>The Content Terminal Content Classification Standard is a content classification system.</p>
+            <p>Platforms are overloaded. There are millions of new units of Content developed and shipped each day. When we first started investing in Creators as a</p>
+        </div>
+        
+        <div class="book-actions">
+            <button class="get-book-btn">Get This Book</button>
+            <button class="close-panel-btn">×</button>
+        </div>
+    </div>
+</div>
+
+<button id="bookInfoToggle" class="book-info-toggle">📖</button><div class="controls">
     <button id="zoomInButton">+</button>
     <button id="zoomOutButton">−</button>
     <button id="resetButton">Reset</button>
@@ -392,7 +601,30 @@ const tree = d3.tree()
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    const bookInfoToggle = d3.select("#bookInfoToggle");
+    
+    bookInfoToggle.on("click", function() {
+        bookInfoPanel.classed("open", !bookInfoPanel.classed("open"));
+    });
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -438,7 +670,30 @@ const zoom = d3.zoom()
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    const bookInfoToggle = d3.select("#bookInfoToggle");
+    
+    bookInfoToggle.on("click", function() {
+        bookInfoPanel.classed("open", !bookInfoPanel.classed("open"));
+    });
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -734,7 +989,30 @@ function focusNode(event, d) {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    const bookInfoToggle = d3.select("#bookInfoToggle");
+    
+    bookInfoToggle.on("click", function() {
+        bookInfoPanel.classed("open", !bookInfoPanel.classed("open"));
+    });
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -848,7 +1126,30 @@ function searchNodes(query) {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    const bookInfoToggle = d3.select("#bookInfoToggle");
+    
+    bookInfoToggle.on("click", function() {
+        bookInfoPanel.classed("open", !bookInfoPanel.classed("open"));
+    });
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -890,7 +1191,30 @@ function searchNodes(query) {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    const bookInfoToggle = d3.select("#bookInfoToggle");
+    
+    bookInfoToggle.on("click", function() {
+        bookInfoPanel.classed("open", !bookInfoPanel.classed("open"));
+    });
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -966,7 +1290,30 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    const bookInfoToggle = d3.select("#bookInfoToggle");
+    
+    bookInfoToggle.on("click", function() {
+        bookInfoPanel.classed("open", !bookInfoPanel.classed("open"));
+    });
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1042,7 +1389,30 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    const bookInfoToggle = d3.select("#bookInfoToggle");
+    
+    bookInfoToggle.on("click", function() {
+        bookInfoPanel.classed("open", !bookInfoPanel.classed("open"));
+    });
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1086,7 +1456,30 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    const bookInfoToggle = d3.select("#bookInfoToggle");
+    
+    bookInfoToggle.on("click", function() {
+        bookInfoPanel.classed("open", !bookInfoPanel.classed("open"));
+    });
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1124,7 +1517,30 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    const bookInfoToggle = d3.select("#bookInfoToggle");
+    
+    bookInfoToggle.on("click", function() {
+        bookInfoPanel.classed("open", !bookInfoPanel.classed("open"));
+    });
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1165,7 +1581,30 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    const bookInfoToggle = d3.select("#bookInfoToggle");
+    
+    bookInfoToggle.on("click", function() {
+        bookInfoPanel.classed("open", !bookInfoPanel.classed("open"));
+    });
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
