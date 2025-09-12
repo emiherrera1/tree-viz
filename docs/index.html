@@ -160,6 +160,27 @@
     .layer-box.selected::before {
         background: #4CAF50;
          } 
+         
+        .search-result {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+        .search-result:hover {
+            background: #f5f5f5;
+        }
+        .search-result:last-child {
+            border-bottom: none;
+        }
+        .search-result-name {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        .search-result-path {
+            font-size: 12px;
+            color: #666;
+        }
     </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
@@ -270,6 +291,7 @@ const height = width;
 const radius = width / 1.3;
 
 let currentTransform = d3.zoomIdentity;
+let allNodes = []; // Store all nodes for search
 
 const tree = d3.tree()
     .size([2 * Math.PI, radius * 0.98])
@@ -451,6 +473,59 @@ function focusNode(event, d) {
         );
 }
 
+// Search functionality
+function getNodePath(node) {
+    const path = [];
+    let current = node;
+    while (current) {
+        path.unshift(current.data.name);
+        current = current.parent;
+    }
+    return path.join(" → ");
+}
+
+function searchNodes(query) {
+    if (!query.trim()) {
+        d3.select("#searchResults").style("display", "none");
+        return;
+    }
+    
+    const searchTerm = query.toLowerCase();
+    const matches = allNodes.filter(node => 
+        node.data.name.toLowerCase().includes(searchTerm)
+    ).slice(0, 10); // Limit to 10 results
+    
+    const resultsList = d3.select("#resultsList");
+    resultsList.selectAll("*").remove();
+    
+    if (matches.length === 0) {
+        resultsList.append("div")
+            .attr("class", "search-result")
+            .style("color", "#999")
+            .text("No results found");
+    } else {
+        matches.forEach(node => {
+            const result = resultsList.append("div")
+                .attr("class", "search-result")
+                .on("click", () => {
+                    focusNode({ stopPropagation: () => {} }, node);
+                    d3.select("#searchResults").style("display", "none");
+                    d3.select("#searchBox").property("value", "");
+                });
+                
+            result.append("div")
+                .attr("class", "search-result-name")
+                .text(node.data.name);
+                
+            result.append("div")
+                .attr("class", "search-result-path")
+                .text(getNodePath(node));
+        });
+    }
+    
+    d3.select("#searchResults").style("display", "block");
+}
+
 // Hide summary and clear selection when clicking empty space
 svg.on("click", () => {
     clearSelection();
@@ -459,6 +534,9 @@ svg.on("click", () => {
 
 d3.json("tree_data.json").then(data => {
     const root = tree(d3.hierarchy(data));
+    
+    // Store all nodes for search
+    allNodes = root.descendants();
 
     const links = g.append("g")
         .selectAll("path")
@@ -519,8 +597,39 @@ d3.json("tree_data.json").then(data => {
             .translate(0, 0)
             .scale(initialScale)
     );
+    
+    // Set up search event listeners
+    const searchBox = d3.select("#searchBox");
+    const searchButton = d3.select("#searchButton");
+    
+    searchBox.on("input", function() {
+        searchNodes(this.value);
+    });
+    
+    searchBox.on("keydown", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            searchNodes(this.value);
+        }
+        if (event.key === "Escape") {
+            d3.select("#searchResults").style("display", "none");
+            this.blur();
+        }
+    });
+    
+    searchButton.on("click", function() {
+        const query = searchBox.property("value");
+        searchNodes(query);
+    });
+    
+    // Hide search results when clicking outside
+    document.addEventListener("click", function(event) {
+        const searchContainer = document.querySelector(".info-box");
+        if (!searchContainer.contains(event.target)) {
+            d3.select("#searchResults").style("display", "none");
+        }
+    });
 });
 </script>
-<script src="radial.js"></script>
 </body>
 </html>
