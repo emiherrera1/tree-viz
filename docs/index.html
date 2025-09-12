@@ -221,36 +221,7 @@
             transition: background 0.2s;
         }
         .back-button:hover {
-    }
-    
-    /* Enhanced Search Styles */
-    .suggestion-item {
-        padding: 8px 12px;
-        cursor: pointer;
-        border-bottom: 1px solid #f0f0f0;
-        transition: background 0.2s;
-        font-size: 14px;
-    }
-    .suggestion-item:hover {
-        background: #f5f5f5;
-    }
-    .suggestion-item:last-child {
-        border-bottom: none;
-    }
-    .suggestion-item.highlighted {
-        background: #e3f2fd;
-    }
-    .suggestion-path {
-        color: #666;
-        font-size: 12px;
-        margin-top: 2px;
-    }
-    .suggestion-match {
-        background: #ffeb3b;
-        padding: 1px 2px;
-        border-radius: 2px;
-        font-weight: bold;
-    }            background: #45a049;
+            background: #45a049;
         }
     </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -291,21 +262,6 @@
             font-size: 20px;
             user-select: none;
         ">→</span>
-    </div>
-    <div id="searchSuggestions" style="
-        display: none;
-        margin-top: 5px;
-        background: white;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        max-height: 200px;
-        overflow-y: auto;
-        position: absolute;
-        width: 90%;
-        z-index: 1000;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    ">
-        <div id="suggestionsList"></div>
     </div>
     <div id="searchResults" style="
         display: none;
@@ -1052,103 +1008,8 @@ d3.json("tree_data.json").then(data => {
     
     // Set up search event listeners
     const searchBox = d3.select("#searchBox");
-    const searchSuggestions = d3.select("#searchSuggestions");
-    const suggestionsList = d3.select("#suggestionsList");
-    let currentSuggestions = [];
-    let selectedSuggestionIndex = -1;
+    const searchButton = d3.select("#searchButton");
     
-    // Function to highlight matching text
-    function highlightMatch(text, query) {
-        if (!query) return text;
-        const regex = new RegExp(`(${query})`, "gi");
-        return text.replace(regex, "<span class="suggestion-match">$1</span>");
-    }
-    
-    // Function to get suggestions based on query
-    function getSuggestions(query) {
-        if (!query || query.length < 2) return [];
-        
-        const suggestions = [];
-        const queryLower = query.toLowerCase();
-        
-        allNodes.forEach(node => {
-            if (node.data.name.toLowerCase().includes(queryLower)) {
-                const path = getNodePath(node);
-                suggestions.push({
-                    node: node,
-                    name: node.data.name,
-                    path: path,
-                    score: node.data.name.toLowerCase().indexOf(queryLower)
-                });
-            }
-        });
-        
-        // Sort by score (exact matches first) and limit to 8 results
-        return suggestions.sort((a, b) => a.score - b.score).slice(0, 8);
-    }
-    
-    // Function to display suggestions
-    function displaySuggestions(suggestions) {
-        if (suggestions.length === 0) {
-            searchSuggestions.style("display", "none");
-            return;
-        }
-        
-        currentSuggestions = suggestions;
-        selectedSuggestionIndex = -1;
-        
-        const suggestionItems = suggestionsList.selectAll(".suggestion-item")
-            .data(suggestions, d => d.node.id);
-        
-        suggestionItems.exit().remove();
-        
-        const suggestionItemsEnter = suggestionItems.enter()
-            .append("div")
-            .attr("class", "suggestion-item")
-            .on("click", function(event, d) {
-                event.stopPropagation();
-                selectSuggestion(d);
-            })
-            .on("mouseenter", function(event, d) {
-                d3.selectAll(".suggestion-item").classed("highlighted", false);
-                d3.select(this).classed("highlighted", true);
-                selectedSuggestionIndex = currentSuggestions.indexOf(d);
-            });
-        
-        suggestionItems.merge(suggestionItemsEnter)
-            .html(d => {
-                const highlightedName = highlightMatch(d.name, searchBox.property("value"));
-                return `<div>${highlightedName}</div><div class="suggestion-path">${d.path}</div>`;
-            });
-        
-        searchSuggestions.style("display", "block");
-    }
-    
-    // Function to select a suggestion
-    function selectSuggestion(suggestion) {
-        searchBox.property("value", suggestion.name);
-        searchSuggestions.style("display", "none");
-        focusNode(suggestion.node);
-    }
-    
-    // Function to hide suggestions
-    function hideSuggestions() {
-        searchSuggestions.style("display", "none");
-        currentSuggestions = [];
-        selectedSuggestionIndex = -1;
-    }    const searchButton = d3.select("#searchButton");
-    
-    searchBox.on("input", function() {
-        const query = searchBox.property("value");
-        if (query.length >= 2) {
-            const suggestions = getSuggestions(query);
-            displaySuggestions(suggestions);
-        } else {
-            hideSuggestions();
-        }
-    });
-    
-    // Enhanced search with suggestions
     searchBox.on("input", function() {
         searchNodes(this.value);
     });
@@ -1186,50 +1047,6 @@ d3.json("tree_data.json").then(data => {
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
     });    
-    searchBox.on("keydown", function(event) {
-        if (searchSuggestions.style("display") === "block" searchBox.on("keydown", function(event) {searchBox.on("keydown", function(event) { currentSuggestions.length > 0) {
-            if (event.key === "ArrowDown") {
-                event.preventDefault();
-                selectedSuggestionIndex = Math.min(selectedSuggestionIndex + 1, currentSuggestions.length - 1);
-                updateSuggestionHighlight();
-            } else if (event.key === "ArrowUp") {
-                event.preventDefault();
-                selectedSuggestionIndex = Math.max(selectedSuggestionIndex - 1, -1);
-                updateSuggestionHighlight();
-            } else if (event.key === "Enter") {
-                event.preventDefault();
-                if (selectedSuggestionIndex >= 0) {
-                    selectSuggestion(currentSuggestions[selectedSuggestionIndex]);
-                } else {
-                    // Fall back to regular search
-                    const query = searchBox.property("value");
-                    if (query) {
-                        searchNodes(query);
-                    }
-                }
-            } else if (event.key === "Escape") {
-                hideSuggestions();
-            }
-        } else {
-            // Original keydown behavior for regular search
-            if (event.key === "Enter") {
-                const query = searchBox.property("value");
-                if (query) {
-                    searchNodes(query);
-                }
-            }
-        }
-    });
-    
-    // Function to update suggestion highlight
-    function updateSuggestionHighlight() {
-        d3.selectAll(".suggestion-item").classed("highlighted", false);
-        if (selectedSuggestionIndex >= 0) {
-            d3.selectAll(".suggestion-item").filter((d, i) => i === selectedSuggestionIndex)
-                .classed("highlighted", true);
-        }
-    }
-    
     searchBox.on("keydown", function(event) {
         if (event.key === "Enter") {
             event.preventDefault();
