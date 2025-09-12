@@ -78,7 +78,94 @@
         background: rgba(255, 255, 255, 0.2);
     }
     .depth-btn.active {
-        background: #4CAF50;
+    }
+    
+    /* Info Panel Styles - Fixed positioning to avoid layout issues */
+    .info-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.2s;
+    }
+    .info-toggle:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+    }
+    
+    .info-panel {
+        position: fixed;
+        top: 0;
+        right: -450px;
+        width: 450px;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+        z-index: 999;
+        transition: right 0.3s ease;
+        overflow-y: auto;
+    }
+    .info-panel.open {
+        right: 0;
+    }
+    
+    .info-content {
+        padding: 20px;
+        color: white;
+        line-height: 1.6;
+    }
+    .info-content h3 {
+        color: #4CAF50;
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+    .info-content h4 {
+        color: #4CAF50;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        font-size: 18px;
+    }
+    .info-content p {
+        margin-bottom: 15px;
+    }
+    .info-content ul {
+        margin-bottom: 15px;
+        padding-left: 20px;
+    }
+    .info-content li {
+        margin-bottom: 5px;
+    }
+    .info-content blockquote {
+        border-left: 3px solid #4CAF50;
+        padding-left: 15px;
+        margin: 15px 0;
+        font-style: italic;
+        color: #ccc;
+    }
+    
+    .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 3px;
+        transition: background 0.2s;
+    }
+    .close-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }        background: #4CAF50;
         border-color: #4CAF50;
     }            position: fixed;
             bottom: 20px;
@@ -326,6 +413,7 @@
     <button id="zoomInButton">+</button>
     <button id="zoomOutButton">−</button>
     <button id="resetButton">Reset</button>
+    <button id="infoToggle" class="info-toggle">ℹ️</button>
     <div class="depth-controls">
         <label>Show Levels:</label>
         <button id="depth1" class="depth-btn active">1-2</button>
@@ -392,7 +480,35 @@ const tree = d3.tree()
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    });
+    
+    // Set up info panel event listeners
+    const infoToggle = d3.select("#infoToggle");
+    const infoPanel = d3.select("#infoPanel");
+    
+    infoToggle.on("click", function() {
+        infoPanel.classed("open", !infoPanel.classed("open"));
+    });
+    
+    d3.select(".close-btn").on("click", function() {
+        infoPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    d3.select("body").on("click", function(event) {
+        if (!d3.select(event.target).classed("info-toggle") && 
+            !d3.select(event.target).classed("info-content") && 
+            !d3.select(event.target).node().closest(".info-content")) {
+            infoPanel.classed("open", false);
+        }
+    });
+    
+    // Close panel with Escape key
+    d3.select(document).on("keydown", function(event) {
+        if (event.key === "Escape" && infoPanel.classed("open")) {
+            infoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -438,7 +554,35 @@ const zoom = d3.zoom()
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    });
+    
+    // Set up info panel event listeners
+    const infoToggle = d3.select("#infoToggle");
+    const infoPanel = d3.select("#infoPanel");
+    
+    infoToggle.on("click", function() {
+        infoPanel.classed("open", !infoPanel.classed("open"));
+    });
+    
+    d3.select(".close-btn").on("click", function() {
+        infoPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    d3.select("body").on("click", function(event) {
+        if (!d3.select(event.target).classed("info-toggle") && 
+            !d3.select(event.target).classed("info-content") && 
+            !d3.select(event.target).node().closest(".info-content")) {
+            infoPanel.classed("open", false);
+        }
+    });
+    
+    // Close panel with Escape key
+    d3.select(document).on("keydown", function(event) {
+        if (event.key === "Escape" && infoPanel.classed("open")) {
+            infoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -734,7 +878,35 @@ function focusNode(event, d) {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    });
+    
+    // Set up info panel event listeners
+    const infoToggle = d3.select("#infoToggle");
+    const infoPanel = d3.select("#infoPanel");
+    
+    infoToggle.on("click", function() {
+        infoPanel.classed("open", !infoPanel.classed("open"));
+    });
+    
+    d3.select(".close-btn").on("click", function() {
+        infoPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    d3.select("body").on("click", function(event) {
+        if (!d3.select(event.target).classed("info-toggle") && 
+            !d3.select(event.target).classed("info-content") && 
+            !d3.select(event.target).node().closest(".info-content")) {
+            infoPanel.classed("open", false);
+        }
+    });
+    
+    // Close panel with Escape key
+    d3.select(document).on("keydown", function(event) {
+        if (event.key === "Escape" && infoPanel.classed("open")) {
+            infoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -848,7 +1020,35 @@ function searchNodes(query) {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    });
+    
+    // Set up info panel event listeners
+    const infoToggle = d3.select("#infoToggle");
+    const infoPanel = d3.select("#infoPanel");
+    
+    infoToggle.on("click", function() {
+        infoPanel.classed("open", !infoPanel.classed("open"));
+    });
+    
+    d3.select(".close-btn").on("click", function() {
+        infoPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    d3.select("body").on("click", function(event) {
+        if (!d3.select(event.target).classed("info-toggle") && 
+            !d3.select(event.target).classed("info-content") && 
+            !d3.select(event.target).node().closest(".info-content")) {
+            infoPanel.classed("open", false);
+        }
+    });
+    
+    // Close panel with Escape key
+    d3.select(document).on("keydown", function(event) {
+        if (event.key === "Escape" && infoPanel.classed("open")) {
+            infoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -890,7 +1090,35 @@ function searchNodes(query) {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    });
+    
+    // Set up info panel event listeners
+    const infoToggle = d3.select("#infoToggle");
+    const infoPanel = d3.select("#infoPanel");
+    
+    infoToggle.on("click", function() {
+        infoPanel.classed("open", !infoPanel.classed("open"));
+    });
+    
+    d3.select(".close-btn").on("click", function() {
+        infoPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    d3.select("body").on("click", function(event) {
+        if (!d3.select(event.target).classed("info-toggle") && 
+            !d3.select(event.target).classed("info-content") && 
+            !d3.select(event.target).node().closest(".info-content")) {
+            infoPanel.classed("open", false);
+        }
+    });
+    
+    // Close panel with Escape key
+    d3.select(document).on("keydown", function(event) {
+        if (event.key === "Escape" && infoPanel.classed("open")) {
+            infoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -966,7 +1194,35 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    });
+    
+    // Set up info panel event listeners
+    const infoToggle = d3.select("#infoToggle");
+    const infoPanel = d3.select("#infoPanel");
+    
+    infoToggle.on("click", function() {
+        infoPanel.classed("open", !infoPanel.classed("open"));
+    });
+    
+    d3.select(".close-btn").on("click", function() {
+        infoPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    d3.select("body").on("click", function(event) {
+        if (!d3.select(event.target).classed("info-toggle") && 
+            !d3.select(event.target).classed("info-content") && 
+            !d3.select(event.target).node().closest(".info-content")) {
+            infoPanel.classed("open", false);
+        }
+    });
+    
+    // Close panel with Escape key
+    d3.select(document).on("keydown", function(event) {
+        if (event.key === "Escape" && infoPanel.classed("open")) {
+            infoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1042,7 +1298,35 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    });
+    
+    // Set up info panel event listeners
+    const infoToggle = d3.select("#infoToggle");
+    const infoPanel = d3.select("#infoPanel");
+    
+    infoToggle.on("click", function() {
+        infoPanel.classed("open", !infoPanel.classed("open"));
+    });
+    
+    d3.select(".close-btn").on("click", function() {
+        infoPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    d3.select("body").on("click", function(event) {
+        if (!d3.select(event.target).classed("info-toggle") && 
+            !d3.select(event.target).classed("info-content") && 
+            !d3.select(event.target).node().closest(".info-content")) {
+            infoPanel.classed("open", false);
+        }
+    });
+    
+    // Close panel with Escape key
+    d3.select(document).on("keydown", function(event) {
+        if (event.key === "Escape" && infoPanel.classed("open")) {
+            infoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1086,7 +1370,35 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    });
+    
+    // Set up info panel event listeners
+    const infoToggle = d3.select("#infoToggle");
+    const infoPanel = d3.select("#infoPanel");
+    
+    infoToggle.on("click", function() {
+        infoPanel.classed("open", !infoPanel.classed("open"));
+    });
+    
+    d3.select(".close-btn").on("click", function() {
+        infoPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    d3.select("body").on("click", function(event) {
+        if (!d3.select(event.target).classed("info-toggle") && 
+            !d3.select(event.target).classed("info-content") && 
+            !d3.select(event.target).node().closest(".info-content")) {
+            infoPanel.classed("open", false);
+        }
+    });
+    
+    // Close panel with Escape key
+    d3.select(document).on("keydown", function(event) {
+        if (event.key === "Escape" && infoPanel.classed("open")) {
+            infoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1124,7 +1436,35 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    });
+    
+    // Set up info panel event listeners
+    const infoToggle = d3.select("#infoToggle");
+    const infoPanel = d3.select("#infoPanel");
+    
+    infoToggle.on("click", function() {
+        infoPanel.classed("open", !infoPanel.classed("open"));
+    });
+    
+    d3.select(".close-btn").on("click", function() {
+        infoPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    d3.select("body").on("click", function(event) {
+        if (!d3.select(event.target).classed("info-toggle") && 
+            !d3.select(event.target).classed("info-content") && 
+            !d3.select(event.target).node().closest(".info-content")) {
+            infoPanel.classed("open", false);
+        }
+    });
+    
+    // Close panel with Escape key
+    d3.select(document).on("keydown", function(event) {
+        if (event.key === "Escape" && infoPanel.classed("open")) {
+            infoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1165,11 +1505,77 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    });
+    
+    // Set up info panel event listeners
+    const infoToggle = d3.select("#infoToggle");
+    const infoPanel = d3.select("#infoPanel");
+    
+    infoToggle.on("click", function() {
+        infoPanel.classed("open", !infoPanel.classed("open"));
+    });
+    
+    d3.select(".close-btn").on("click", function() {
+        infoPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    d3.select("body").on("click", function(event) {
+        if (!d3.select(event.target).classed("info-toggle") && 
+            !d3.select(event.target).classed("info-content") && 
+            !d3.select(event.target).node().closest(".info-content")) {
+            infoPanel.classed("open", false);
+        }
+    });
+    
+    // Close panel with Escape key
+    d3.select(document).on("keydown", function(event) {
+        if (event.key === "Escape" && infoPanel.classed("open")) {
+            infoPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
     });});
 </script>
 </body>
+    <div id="infoPanel" class="info-panel">
+        <div class="info-content">
+            <button class="close-btn">×</button>
+            <h3>About CTNCS</h3>
+            <p>The Content Terminal Content Classification Standard is a content classification system. Platforms are overloaded. There are millions of new units of Content developed and shipped each day.</p>
+            <p>When we first started investing in Creators as a category, we were overwhelmed. Not by noise, but by the richness of underexplored niches and micro-niches. Many of these were completely undiscoverable. Others were miscategorized, flattened by legacy systems that prioritized the Creator's self-selected identity rather than the unit of content itself.</p>
+            <p>Most existing categorization frameworks weren't built for this new world. They were designed for advertisers, not investors or for Creators as Founders. For static websites, not dynamic feeds. For traditional media, not for what content has become: modular, iterative, hyper-niched, and platform-native.</p>
+            <h4>The Cultural Gap</h4>
+            <p>There are two or three existing content categorizations. Most have been focused on traditional ad buyers – not for understanding digital behavior and creative output. Traditional in-real-life business taxonomies reflect public market interests.</p>
+            <ul>
+                <li>BICS (Bloomberg Industry Classification System) → for finance</li>
+                <li>NAICS (North American Industry Classification System) → for business & labor</li>
+                <li>IAB Taxonomy → for digital advertising</li>
+                <li>CTNCS → the Content ecosystem</li>
+            </ul>
+            <p>CTNCS is an element of a larger, long-term project. We represent content becoming the new consumer product, the new job, the new export. CTNCS is a classification tool to understand the behaviors and interests of digital consumers and Creators from a digital investment perspective.</p>
+            <blockquote>If software ate the world, content is what it digests. We have yet to map the nutrients.</blockquote>
+            <p>Despite driving billions in GDP, there is no comparable standard for the general content & Creator industry. This taxonomy aims to fill the need for a cultural technology. Not as an ad tech framework.</p>
+            <p>CTNCS is built from the bottom up: starting with the individual unit of content itself, not the selected categories for the larger Creator bucket the industry chose that it should "box" itself into to "fit" in.</p>
+            <p>What defines a "niche" today isn't just a topic; it's how it's delivered and who resonates with it. CTNCS captures style, structure, and context, not just subject matter:</p>
+            <blockquote>"Morning Routine" ≠ "Productivity Breakdown"<br>"Fan Theory" ≠ "Lore Breakdown" ≠ "Fancam"</blockquote>
+            <p>To classify is to define. And to define is to shape perception, funding, and visibility. CTNCS aims to direct a clearer understanding of:</p>
+            <ul>
+                <li>The Creator vs. the Product (individual unit of content)</li>
+                <li>The living nature of online content niches</li>
+                <li>The market-level structure of the Content industry</li>
+                <li>The taxonomy needs of researchers, platforms, and investors</li>
+            </ul>
+            <p>Without a taxonomy, Creators are getting slotted into imprecise or outdated categories that affect:</p>
+            <ul>
+                <li>Discovery on platforms (not just social)</li>
+                <li>Eligibility for investments, deals, or grants</li>
+                <li>Research and accurate media coverage of the industry, Founders, and their products</li>
+            </ul>
+            <p>CTNCS exists to give Creators and Researchers language that fits the process of discovering the online market. This is Version 1. CTNCS is a tool meant to be expanded, challenged, refined and referenced. It's a contribution to a beloved field that is generally undervalued.</p>
+            <blockquote>You can't fund what you can't define. You can't measure what you haven't mapped.</blockquote>
+        </div>
+    </div>
 </html>
