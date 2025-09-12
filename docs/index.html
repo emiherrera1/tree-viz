@@ -164,12 +164,105 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
+<div class="info-box" style="
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    color: black;
+    width: 250px;
+    z-index: 100;
+">
+    <h2 style="margin-top: 0;">Content Atlas</h2>
+    <p style="margin-bottom: 20px;">Generated based on content categories and relationships</p>
+    
+    <h3 style="margin-bottom: 10px;">Legend:</h3>
+    <div style="margin-bottom: 5px;">
+        <span style="color: #4CAF50;">●</span> Root Node
+    </div>
+    <div style="margin-bottom: 5px;">
+        <span style="color: white;">●</span> Category Node
+    </div>
+    <div style="margin-bottom: 5px;">
+        <span style="color: white;">―</span> Connection
+    </div>
+
+    <div style="margin-top: 20px; display: flex; align-items: center; gap: 8px;">
+        <input type="text" id="searchBox" 
+               placeholder="Search nodes..." 
+               style="width: 90%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+        <span id="searchButton" style="
+            cursor: pointer;
+            color: #666;
+            font-size: 20px;
+            user-select: none;
+        ">→</span>
+    </div>
+    <div id="searchResults" style="
+        display: none;
+        margin-top: 10px;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        max-height: 150px;
+        overflow-y: auto;
+    ">
+        <div style="padding: 8px; border-bottom: 1px solid #eee;">
+            <strong>Search Results:</strong>
+        </div>
+        <div id="resultsList"></div>
+    </div>
+</div>
+<div id="nodeDetails" style="
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    color: black;
+    width: 300px;
+    display: none;
+    z-index: 100;
+">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 id="nodeDetailsTitle" style="margin: 0;">Filtering Atlas to <span id="nodeName"></span>'s Connections</h2>
+        <span id="closeDetailsButton" style="cursor: pointer; font-size: 20px;">×</span>
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <strong>Name:</strong>
+        <div id="detailName"></div>
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <strong>Depth Level:</strong>
+        <div id="detailDepth"></div>
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <strong>Connections:</strong>
+        <div id="detailConnections"></div>
+    </div>
+    
+    <button id="returnButton" style="
+        background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+    ">Return to the full network</button>
+</div>
 <div id="tooltip"></div>
 <div id="layerSummary" class="layer-summary"></div>
 <div class="controls">
-    <button onclick="zoomIn()">+</button>
-    <button onclick="zoomOut()">−</button>
-    <button onclick="resetZoom()">Reset</button>
+    <button id="zoomInButton">+</button>
+    <button id="zoomOutButton">−</button>
+    <button id="resetButton">Reset</button>
 </div>
 <script>
 const width = Math.min(window.innerWidth, window.innerHeight);
@@ -182,19 +275,19 @@ const tree = d3.tree()
     .size([2 * Math.PI, radius * 0.98])
     .separation((a, b) => {
         if (a.depth === 0) {
-            return (a.parent == b.parent ? 10 : 12);
+            return (a.parent == b.parent ? 8 : 10);
         } else if (a.depth === 1) {
-            return (a.parent == b.parent ? 8 : 9);
-        } else if (a.depth === 2) {
             return (a.parent == b.parent ? 7 : 8);
-        } else if (a.depth === 3) {
+        } else if (a.depth === 2) {
             return (a.parent == b.parent ? 6 : 7);
-        } else if (a.depth === 4) {
+        } else if (a.depth === 3) {
             return (a.parent == b.parent ? 5 : 6);
+        } else if (a.depth === 4) {
+            return (a.parent == b.parent ? 4 : 5);
         } else if (a.depth === 5) {
-            return (a.parent == b.parent ? 4.5 : 5);
-        } else {
             return (a.parent == b.parent ? 3.5 : 4);
+        } else {
+            return (a.parent == b.parent ? 2.5 : 3.5);
         }
     });
 
@@ -428,5 +521,6 @@ d3.json("tree_data.json").then(data => {
     );
 });
 </script>
+<script src="radial.js"></script>
 </body>
 </html>
