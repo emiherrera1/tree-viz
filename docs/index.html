@@ -340,6 +340,8 @@ const height = width;
 const radius = width / 1.3;
 
 let currentTransform = d3.zoomIdentity;
+let maxDepth = 2; // Maximum depth to show by default
+let originalData = null; // Store original data for filtering
 let allNodes = []; // Store all nodes for search
 
 const tree = d3.tree()
@@ -470,6 +472,139 @@ function resetZoom() {
     d3.select("#layerSummary").style("opacity", 0);
 }
 
+function filterDataByDepth(data, maxDepth) {
+    if (!data || !data.children) return data;
+    
+    const filtered = {
+        name: data.name,
+        children: data.children.map(child => {
+            if (child.depth >= maxDepth) {
+                return { name: child.name, depth: child.depth };
+            }
+            return filterDataByDepth(child, maxDepth);
+        })
+    };
+    return filtered;
+}
+
+function updateVisualization() {
+    if (!originalData) return;
+    
+    const filteredData = filterDataByDepth(originalData, maxDepth);
+    const root = tree(d3.hierarchy(filteredData));
+    
+    // Update all nodes for search
+    allNodes = root.descendants();
+    
+    // Update links
+    const links = g.selectAll(".link")
+        .data(root.links());
+    
+    links.exit().remove();
+    
+    const linksEnter = links.enter()
+        .append("path")
+        .attr("class", "link")
+        .attr("data-to-root", d => d.source.depth === 0);
+    
+    links.merge(linksEnter)
+        .attr("d", d3.linkRadial()
+            .angle(d => d.x)
+            .radius(d => d.y));
+    
+    // Update nodes
+    const nodes = g.selectAll(".node")
+        .data(root.descendants());
+    
+    nodes.exit().remove();
+    
+    const nodesEnter = nodes.enter()
+        .append("g")
+        .attr("class", "node")
+        .attr("data-depth", d => d.depth)
+        .attr("transform", d => `
+            rotate(${d.x * 180 / Math.PI - 90})
+            translate(${d.y},0)
+        `);
+    
+    nodes.merge(nodesEnter)
+        .attr("transform", d => `
+            rotate(${d.x * 180 / Math.PI - 90})
+            translate(${d.y},0)
+        `);
+    
+    nodes.each(function(d) {
+        d.nodeElement = this;
+    });
+    
+    // Update circles
+    const circles = nodes.selectAll("circle")
+        .data(d => [d]);
+    
+    circles.exit().remove();
+    
+    const circlesEnter = circles.enter()
+        .append("circle")
+        .attr("r", d => d.depth === 0 ? 0 : 1.5);
+    
+    circles.merge(circlesEnter)
+        .attr("r", d => d.depth === 0 ? 0 : 1.5);
+    
+    // Update text
+    const texts = nodes.selectAll("text")
+        .data(d => [d]);
+    
+    texts.exit().remove();
+    
+    const textsEnter = texts.enter()
+        .append("text")
+        .attr("dy", "0.31em")
+        .attr("x", d => {
+            if (d.depth === 0) {
+                return 0;
+            }
+            return d.x < Math.PI === !d.children ? 10 : -10;
+        })
+        .attr("text-anchor", d => {
+            if (d.depth === 0) {
+                return "middle";
+            }
+            return d.x < Math.PI ? "start" : "end";
+        })
+        .style("font-size", d => {
+            if (d.depth === 0) return "16px";
+            if (d.depth === 1) return "12px";
+            if (d.depth === 2) return "10px";
+            return "8px";
+        })
+        .text(d => d.data.name);
+    
+    texts.merge(textsEnter)
+        .attr("x", d => {
+            if (d.depth === 0) {
+                return 0;
+            }
+            return d.x < Math.PI === !d.children ? 10 : -10;
+        })
+        .attr("text-anchor", d => {
+            if (d.depth === 0) {
+                return "middle";
+            }
+            return d.x < Math.PI ? "start" : "end";
+        })
+        .style("font-size", d => {
+            if (d.depth === 0) return "16px";
+            if (d.depth === 1) return "12px";
+            if (d.depth === 2) return "10px";
+            return "8px";
+        })
+        .text(d => d.data.name);
+    
+    // Re-attach event listeners
+    nodes.on("mouseover", showTooltip)
+        .on("mouseout", hideTooltip)
+        .on("click", focusNode);
+}
 function clearSelection() {
     d3.selectAll(".node-selected").classed("node-selected", false);
     d3.selectAll(".link-selected").classed("link-selected", false);
@@ -771,7 +906,9 @@ svg.on("click", () => {
 });
 
 d3.json("tree_data.json").then(data => {
-    const root = tree(d3.hierarchy(data));
+    originalData = data; // Store original data
+    const filteredData = filterDataByDepth(data, maxDepth);
+    const root = tree(d3.hierarchy(filteredData));
     
     // Store all nodes for search
     allNodes = root.descendants();
