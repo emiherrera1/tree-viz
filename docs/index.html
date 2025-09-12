@@ -688,6 +688,24 @@ const tree = d3.tree()
         if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
             bookInfoPanel.classed("open", false);
         }
+    });    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
     });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
@@ -742,6 +760,24 @@ const zoom = d3.zoom()
     bookInfoToggle.on("click", function() {
         bookInfoPanel.classed("open", !bookInfoPanel.classed("open"));
     });
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
+    });    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
     
     d3.select(".close-panel-btn").on("click", function() {
         bookInfoPanel.classed("open", false);
@@ -1076,6 +1112,24 @@ function focusNode(event, d) {
         if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
             bookInfoPanel.classed("open", false);
         }
+    });    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
     });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
@@ -1213,6 +1267,24 @@ function searchNodes(query) {
         if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
             bookInfoPanel.classed("open", false);
         }
+    });    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
     });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
@@ -1263,6 +1335,24 @@ function searchNodes(query) {
     bookInfoToggle.on("click", function() {
         bookInfoPanel.classed("open", !bookInfoPanel.classed("open"));
     });
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
+    });    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
     
     d3.select(".close-panel-btn").on("click", function() {
         bookInfoPanel.classed("open", false);
@@ -1377,6 +1467,24 @@ d3.json("tree_data.json").then(data => {
         if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
             bookInfoPanel.classed("open", false);
         }
+    });    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
     });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
@@ -1476,6 +1584,24 @@ d3.json("tree_data.json").then(data => {
         if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
             bookInfoPanel.classed("open", false);
         }
+    });    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
     });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
@@ -1528,6 +1654,24 @@ d3.json("tree_data.json").then(data => {
     bookInfoToggle.on("click", function() {
         bookInfoPanel.classed("open", !bookInfoPanel.classed("open"));
     });
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
+    });    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
     
     d3.select(".close-panel-btn").on("click", function() {
         bookInfoPanel.classed("open", false);
@@ -1604,6 +1748,24 @@ d3.json("tree_data.json").then(data => {
         if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
             bookInfoPanel.classed("open", false);
         }
+    });    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
     });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
@@ -1653,6 +1815,24 @@ d3.json("tree_data.json").then(data => {
     bookInfoToggle.on("click", function() {
         bookInfoPanel.classed("open", !bookInfoPanel.classed("open"));
     });
+    
+    d3.select(".close-panel-btn").on("click", function() {
+        bookInfoPanel.classed("open", false);
+    });
+    
+    d3.select(".get-book-btn").on("click", function() {
+        // Add your book purchase/download logic here
+        alert("Book purchase/download functionality would be implemented here!");
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!bookInfoPanel.node().contains(event.target) && !bookInfoToggle.node().contains(event.target)) {
+            bookInfoPanel.classed("open", false);
+        }
+    });    
+    // Set up book info panel event listeners
+    const bookInfoPanel = d3.select("#bookInfoPanel");
     
     d3.select(".close-panel-btn").on("click", function() {
         bookInfoPanel.classed("open", false);
