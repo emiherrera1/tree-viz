@@ -78,7 +78,124 @@
         background: rgba(255, 255, 255, 0.2);
     }
     .depth-btn.active {
-        background: #4CAF50;
+    
+    /* About Panel Styles */
+    .about-panel {
+        position: fixed;
+        top: 0;
+        left: -400px;
+        width: 400px;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        border-right: 2px solid #4CAF50;
+        backdrop-filter: blur(10px);
+        transition: left 0.3s ease-in-out;
+        z-index: 1000;
+        overflow-y: auto;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    
+    .about-panel.open {
+        left: 0;
+    }
+    
+    .about-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid #4CAF50;
+        padding-bottom: 20px;
+    }
+    
+    .about-header h2 {
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0;
+    }
+    
+    .close-about-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    
+    .close-about-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .about-content {
+        color: white;
+    }
+    
+    .about-section {
+        margin-bottom: 25px;
+    }
+    
+    .about-section h3 {
+        color: #4CAF50;
+        font-size: 14px;
+        font-weight: bold;
+        margin: 0 0 10px 0;
+        border-bottom: 1px solid #4CAF50;
+        padding-bottom: 5px;
+    }
+    
+    .about-section p {
+        font-size: 12px;
+        line-height: 1.5;
+        margin-bottom: 10px;
+    }
+    
+    .about-section ul {
+        margin: 10px 0;
+        padding-left: 20px;
+    }
+    
+    .about-section li {
+        font-size: 12px;
+        line-height: 1.4;
+        margin-bottom: 5px;
+    }
+    
+    .about-section strong {
+        color: #4CAF50;
+        font-weight: bold;
+    }
+    
+    .about-toggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        border: 2px solid #4CAF50;
+        padding: 10px 14px;
+        border-radius: 50%;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 1001;
+        transition: all 0.2s;
+        backdrop-filter: blur(5px);
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .about-toggle:hover {
+        background: rgba(76, 175, 80, 0.2);
+        transform: scale(1.05);
+    }        background: #4CAF50;
         border-color: #4CAF50;
     }            position: fixed;
             bottom: 20px;
@@ -322,7 +439,57 @@
 </div>
 <div id="tooltip"></div>
 <div id="layerSummary" class="layer-summary"></div>
-<div class="controls">
+<button id="aboutToggle" class="about-toggle">?</button>
+
+<div id="aboutPanel" class="about-panel">
+    <div class="about-header">
+        <h2>About This Visualization</h2>
+        <button class="close-about-btn">×</button>
+    </div>
+    
+    <div class="about-content">
+        <div class="about-section">
+            <h3>What is this?</h3>
+            <p>This is a radial tree visualization of the Content Terminal Niche Classification Standard (CTNCS). It shows the hierarchical structure of content categories and their relationships.</p>
+        </div>
+        
+        <div class="about-section">
+            <h3>How to Navigate</h3>
+            <ul>
+                <li><strong>Zoom:</strong> Use the +, -, and Reset buttons to zoom in/out</li>
+                <li><strong>Pan:</strong> Click and drag to move around the tree</li>
+                <li><strong>Search:</strong> Use the search bar to find specific nodes</li>
+                <li><strong>Click Nodes:</strong> Click any node to see its path and details</li>
+            </ul>
+        </div>
+        
+        <div class="about-section">
+            <h3>Depth Controls</h3>
+            <p>Use the "Show Levels" buttons to control how many levels of the tree are visible:</p>
+            <ul>
+                <li><strong>1-2:</strong> Shows only the main categories (cleanest view)</li>
+                <li><strong>1-3:</strong> Shows main categories and subcategories</li>
+                <li><strong>1-4:</strong> Shows deeper levels of detail</li>
+                <li><strong>All:</strong> Shows the complete tree (may be crowded)</li>
+            </ul>
+        </div>
+        
+        <div class="about-section">
+            <h3>Understanding the Tree</h3>
+            <ul>
+                <li><strong>Green Center:</strong> Root "Content" node</li>
+                <li><strong>White Circles:</strong> Category nodes</li>
+                <li><strong>Gray Lines:</strong> Connections between categories</li>
+                <li><strong>Text Labels:</strong> Category names</li>
+            </ul>
+        </div>
+        
+        <div class="about-section">
+            <h3>About CTNCS</h3>
+            <p>The Content Terminal Niche Classification Standard is a comprehensive taxonomy for understanding content categories and their relationships. It helps classify and organize the vast landscape of digital content.</p>
+        </div>
+    </div>
+</div><div class="controls">
     <button id="zoomInButton">+</button>
     <button id="zoomOutButton">−</button>
     <button id="resetButton">Reset</button>
@@ -392,7 +559,25 @@ const tree = d3.tree()
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up about panel event listeners
+    const aboutPanel = d3.select("#aboutPanel");
+    const aboutToggle = d3.select("#aboutToggle");
+    
+    aboutToggle.on("click", function() {
+        aboutPanel.classed("open", !aboutPanel.classed("open"));
+    });
+    
+    d3.select(".close-about-btn").on("click", function() {
+        aboutPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!aboutPanel.node().contains(event.target) && !aboutToggle.node().contains(event.target)) {
+            aboutPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -438,7 +623,25 @@ const zoom = d3.zoom()
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up about panel event listeners
+    const aboutPanel = d3.select("#aboutPanel");
+    const aboutToggle = d3.select("#aboutToggle");
+    
+    aboutToggle.on("click", function() {
+        aboutPanel.classed("open", !aboutPanel.classed("open"));
+    });
+    
+    d3.select(".close-about-btn").on("click", function() {
+        aboutPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!aboutPanel.node().contains(event.target) && !aboutToggle.node().contains(event.target)) {
+            aboutPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -734,7 +937,25 @@ function focusNode(event, d) {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up about panel event listeners
+    const aboutPanel = d3.select("#aboutPanel");
+    const aboutToggle = d3.select("#aboutToggle");
+    
+    aboutToggle.on("click", function() {
+        aboutPanel.classed("open", !aboutPanel.classed("open"));
+    });
+    
+    d3.select(".close-about-btn").on("click", function() {
+        aboutPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!aboutPanel.node().contains(event.target) && !aboutToggle.node().contains(event.target)) {
+            aboutPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -848,7 +1069,25 @@ function searchNodes(query) {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up about panel event listeners
+    const aboutPanel = d3.select("#aboutPanel");
+    const aboutToggle = d3.select("#aboutToggle");
+    
+    aboutToggle.on("click", function() {
+        aboutPanel.classed("open", !aboutPanel.classed("open"));
+    });
+    
+    d3.select(".close-about-btn").on("click", function() {
+        aboutPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!aboutPanel.node().contains(event.target) && !aboutToggle.node().contains(event.target)) {
+            aboutPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -890,7 +1129,25 @@ function searchNodes(query) {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up about panel event listeners
+    const aboutPanel = d3.select("#aboutPanel");
+    const aboutToggle = d3.select("#aboutToggle");
+    
+    aboutToggle.on("click", function() {
+        aboutPanel.classed("open", !aboutPanel.classed("open"));
+    });
+    
+    d3.select(".close-about-btn").on("click", function() {
+        aboutPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!aboutPanel.node().contains(event.target) && !aboutToggle.node().contains(event.target)) {
+            aboutPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -966,7 +1223,25 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up about panel event listeners
+    const aboutPanel = d3.select("#aboutPanel");
+    const aboutToggle = d3.select("#aboutToggle");
+    
+    aboutToggle.on("click", function() {
+        aboutPanel.classed("open", !aboutPanel.classed("open"));
+    });
+    
+    d3.select(".close-about-btn").on("click", function() {
+        aboutPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!aboutPanel.node().contains(event.target) && !aboutToggle.node().contains(event.target)) {
+            aboutPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1042,7 +1317,25 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up about panel event listeners
+    const aboutPanel = d3.select("#aboutPanel");
+    const aboutToggle = d3.select("#aboutToggle");
+    
+    aboutToggle.on("click", function() {
+        aboutPanel.classed("open", !aboutPanel.classed("open"));
+    });
+    
+    d3.select(".close-about-btn").on("click", function() {
+        aboutPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!aboutPanel.node().contains(event.target) && !aboutToggle.node().contains(event.target)) {
+            aboutPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1086,7 +1379,25 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up about panel event listeners
+    const aboutPanel = d3.select("#aboutPanel");
+    const aboutToggle = d3.select("#aboutToggle");
+    
+    aboutToggle.on("click", function() {
+        aboutPanel.classed("open", !aboutPanel.classed("open"));
+    });
+    
+    d3.select(".close-about-btn").on("click", function() {
+        aboutPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!aboutPanel.node().contains(event.target) && !aboutToggle.node().contains(event.target)) {
+            aboutPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1124,7 +1435,25 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up about panel event listeners
+    const aboutPanel = d3.select("#aboutPanel");
+    const aboutToggle = d3.select("#aboutToggle");
+    
+    aboutToggle.on("click", function() {
+        aboutPanel.classed("open", !aboutPanel.classed("open"));
+    });
+    
+    d3.select(".close-about-btn").on("click", function() {
+        aboutPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!aboutPanel.node().contains(event.target) && !aboutToggle.node().contains(event.target)) {
+            aboutPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
@@ -1165,7 +1494,25 @@ d3.json("tree_data.json").then(data => {
     });
     
     d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
+    
+    // Set up about panel event listeners
+    const aboutPanel = d3.select("#aboutPanel");
+    const aboutToggle = d3.select("#aboutToggle");
+    
+    aboutToggle.on("click", function() {
+        aboutPanel.classed("open", !aboutPanel.classed("open"));
+    });
+    
+    d3.select(".close-about-btn").on("click", function() {
+        aboutPanel.classed("open", false);
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener("click", function(event) {
+        if (!aboutPanel.node().contains(event.target) && !aboutToggle.node().contains(event.target)) {
+            aboutPanel.classed("open", false);
+        }
+    });        maxDepth = 10; // Show all levels
         d3.selectAll(".depth-btn").classed("active", false);
         d3.select("#depthAll").classed("active", true);
         updateVisualization();
