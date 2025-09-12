@@ -2,47 +2,9 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <style>
         body { 
-        /* Mobile Responsive Styles */
-        @media (max-width: 768px) {
-            .info-box {
-                width: 90% !important;
-                max-width: 350px !important;
-                padding: 15px !important;
-                top: 10px !important;
-                left: 5% !important;
-                font-size: 12px;
-            }
-            
-            .controls {
-                bottom: 10px !important;
-                right: 10px !important;
-                padding: 8px !important;
-                gap: 6px !important;
-            }
-            
-            .controls button {
-                padding: 8px 12px !important;
-                font-size: 12px !important;
-                min-width: 40px !important;
-            }
-            
-            .depth-btn {
-                padding: 6px 8px !important;
-                font-size: 10px !important;
-                margin: 0 1px !important;
-            }
-            
-            .node text {
-                font-size: 6px !important;
-            }
-            
-            .node[data-depth="0"] text {
-                font-size: 12px !important;
-            }
-        }            margin: 0;
+            margin: 0;
             background: black;
             width: 100vw;
             height: 100vh;
@@ -441,9 +403,8 @@ const svg = d3.select("body").append("svg")
 
 const g = svg.append("g");
 
-            currentTransform = event.transform;
-            g.attr("transform", event.transform);
-        });    .scaleExtent([0.1, 8])
+const zoom = d3.zoom()
+    .scaleExtent([0.1, 8])
     .on("zoom", (event) => {
         currentTransform = event.transform;
         g.attr("transform", event.transform);
