@@ -7,10 +7,6 @@
         body { 
         /* Mobile Responsive Styles */
         @media (max-width: 768px) {
-            body {
-                font-size: 14px;
-            }
-            
             .info-box {
                 width: 90% !important;
                 max-width: 350px !important;
@@ -18,26 +14,6 @@
                 top: 10px !important;
                 left: 5% !important;
                 font-size: 12px;
-            }
-            
-            .info-box h2 {
-                font-size: 18px !important;
-                margin-bottom: 10px !important;
-            }
-            
-            .info-box h3 {
-                font-size: 14px !important;
-                margin-bottom: 8px !important;
-            }
-            
-            .info-box p {
-                font-size: 11px !important;
-                margin-bottom: 8px !important;
-            }
-            
-            .info-box input {
-                padding: 10px !important;
-                font-size: 14px !important;
             }
             
             .controls {
@@ -53,10 +29,6 @@
                 min-width: 40px !important;
             }
             
-            .depth-controls {
-                margin-top: 8px !important;
-            }
-            
             .depth-btn {
                 padding: 6px 8px !important;
                 font-size: 10px !important;
@@ -69,52 +41,6 @@
             
             .node[data-depth="0"] text {
                 font-size: 12px !important;
-            }
-            
-            .node[data-depth="1"] text {
-                font-size: 8px !important;
-            }
-            
-            .node[data-depth="2"] text {
-                font-size: 6px !important;
-            }
-            
-            .node circle {
-                r: 1px !important;
-            }
-            
-            .node:hover circle {
-                r: 2px !important;
-            }
-            
-            .link {
-                stroke-width: 0.3px !important;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .info-box {
-                width: 95% !important;
-                left: 2.5% !important;
-                padding: 10px !important;
-            }
-            
-            .controls {
-                flex-direction: column !important;
-                align-items: center !important;
-                gap: 4px !important;
-            }
-            
-            .depth-controls {
-                order: -1 !important;
-            }
-            
-            .node text {
-                font-size: 5px !important;
-            }
-            
-            .node[data-depth="0"] text {
-                font-size: 10px !important;
             }
         }            margin: 0;
             background: black;
@@ -255,23 +181,7 @@
             stroke-width: 1.5 !important;
         }
         .layer-summary {
-        /* Mobile layer summary */
-        @media (max-width: 768px) {
-            .layer-summary {
-                bottom: 80px !important;
-                left: 10px !important;
-                right: 10px !important;
-                padding: 10px !important;
-                font-size: 12px !important;
-                max-height: 120px !important;
-            }
-            
-            .back-button {
-                padding: 6px 12px !important;
-                font-size: 12px !important;
-                margin-top: 8px !important;
-            }
-        }            position: fixed;
+            position: fixed;
             left: 20px;
             top: 20px;
             background: black;
@@ -464,15 +374,8 @@
 </div>
 <script>
 const width = Math.min(window.innerWidth, window.innerHeight);
-    // Mobile detection and optimization
-    const isMobile = window.innerWidth <= 768;
-    const isSmallMobile = window.innerWidth <= 480;
-    
-    // Adjust tree parameters for mobile
-    const mobileRadius = isMobile ? width / 1.1 : width / 1.3;
-    const mobileFontSize = isMobile ? 6 : 8;
-    const mobileNodeSize = isMobile ? 1 : 1.5;const height = width;
-const radius = mobileRadius;
+const height = width;
+const radius = width / 1.3;
 
 let currentTransform = d3.zoomIdentity;
 let maxDepth = 2; // Maximum depth to show by default
@@ -580,57 +483,7 @@ const g = svg.append("g");
         updateVisualization();
     });
 svg.call(zoom);
-    
-    // Mobile touch event handling
-    let touchStartDistance = 0;
-    let touchStartScale = 1;
-    
-    svg.on("touchstart", function(event) {
-        if (event.touches.length === 2) {
-            // Two-finger pinch start
-            const touch1 = event.touches[0];
-            const touch2 = event.touches[1];
-            touchStartDistance = Math.sqrt(
-                Math.pow(touch2.clientX - touch1.clientX, 2) +
-                Math.pow(touch2.clientY - touch1.clientY, 2)
-            );
-            touchStartScale = currentTransform.k;
-        }
-    });
-    
-    svg.on("touchmove", function(event) {
-        if (event.touches.length === 2) {
-            // Two-finger pinch zoom
-            event.preventDefault();
-            const touch1 = event.touches[0];
-            const touch2 = event.touches[1];
-            const currentDistance = Math.sqrt(
-                Math.pow(touch2.clientX - touch1.clientX, 2) +
-                Math.pow(touch2.clientY - touch1.clientY, 2)
-            );
-            
-            if (touchStartDistance > 0) {
-                const scale = currentDistance / touchStartDistance;
-                const newScale = Math.max(0.1, Math.min(8, touchStartScale * scale));
-                const centerX = (touch1.clientX + touch2.clientX) / 2;
-                const centerY = (touch1.clientY + touch2.clientY) / 2;
-                
-                const transform = d3.zoomIdentity
-                    .translate(centerX, centerY)
-                    .scale(newScale)
-                    .translate(-centerX, -centerY);
-                
-                svg.transition().duration(0).call(zoom.transform, transform);
-            }
-        }
-    });
-    
-    // Prevent default touch behaviors that interfere with zoom
-    svg.on("touchstart touchmove", function(event) {
-        if (event.touches.length > 1) {
-            event.preventDefault();
-        }
-    });
+
 function zoomIn() {
     svg.transition()
         .duration(750)
@@ -1197,28 +1050,7 @@ d3.json("tree_data.json").then(data => {
     const searchButton = d3.select("#searchButton");
     
     searchBox.on("input", function() {
-    // Mobile-optimized search
-    searchBox.on("focus", function() {
-        // On mobile, scroll to search box when focused
-        if (window.innerWidth <= 768) {
-            this.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-    });
-    
-    // Prevent zoom on input focus (iOS Safari)
-    searchBox.on("focus", function() {
-        if (window.innerWidth <= 768) {
-            const viewport = document.querySelector("meta[name=viewport]");
-            viewport.setAttribute("content", "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no");
-        }
-    });
-    
-    searchBox.on("blur", function() {
-        if (window.innerWidth <= 768) {
-            const viewport = document.querySelector("meta[name=viewport]");
-            viewport.setAttribute("content", "width=device-width, initial-scale=1.0, user-scalable=no");
-        }
-    });        searchNodes(this.value);
+        searchNodes(this.value);
     });
     
     // Set up zoom control button event listeners
