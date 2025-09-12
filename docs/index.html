@@ -181,6 +181,22 @@
             font-size: 12px;
             color: #666;
         }
+        
+        .back-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 15px;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        .back-button:hover {
+            background: #45a049;
+        }
     </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
@@ -398,6 +414,26 @@ function hideTooltip() {
     d3.selectAll(".node").classed("node-highlight", false);
 }
 
+function goBackToFullView() {
+    // Reset zoom to original view
+    svg.transition()
+        .duration(1000)
+        .ease(d3.easeQuadOut)
+        .call(zoom.transform, 
+            d3.zoomIdentity
+                .translate(0, 0)
+                .scale(0.4)
+        );
+    
+    // Clear all selections and highlights
+    clearSelection();
+    d3.selectAll(".link").classed("path-highlight", false);
+    d3.selectAll(".node").classed("node-highlight", false);
+    
+    // Hide the layer summary
+    d3.select("#layerSummary").style("opacity", 0);
+}
+
 function focusNode(event, d) {
     event.stopPropagation();
 
@@ -416,7 +452,7 @@ function focusNode(event, d) {
         current = current.parent;
     }
 
-    // Show layer summary
+    // Show layer summary with back button
     const summary = d3.select("#layerSummary");
     let summaryHtml = `<strong>Path to ${d.data.name}:</strong><br>`;
     
@@ -436,9 +472,13 @@ function focusNode(event, d) {
         `;
     });
     
+    // Add back button
+    summaryHtml += `<button class="back-button" onclick="goBackToFullView()">← Back to Full View</button>`;
+    
     summary
         .html(summaryHtml)
-        .style("opacity", 1);
+        .style("opacity", 1)
+        .style("pointer-events", "auto"); // Enable pointer events for the back button
 
     // Improved zoom to node
     const scale = 4;
