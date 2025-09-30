@@ -165,17 +165,39 @@
             .controls {
                 position: fixed !important;
                 top: 10px !important;
-                left: 10px !important;
                 right: 10px !important;
+                left: auto !important;
                 bottom: auto !important;
                 width: auto !important;
                 max-width: none !important;
-                flex-direction: column !important;
-                gap: 5px !important;
-                padding: 8px !important;
+                flex-direction: row !important;
+                gap: 3px !important;
+                padding: 5px !important;
                 z-index: 1000 !important;
             }
+            .controls button {
+                padding: 4px 8px !important;
+                font-size: 12px !important;
+                min-width: 30px !important;
+            }
             .node text {
+                font: 16px Arial !important;
+            }
+            .node[data-depth="0"] text {
+                font: bold 24px Arial !important;
+            }
+            .node:hover text {
+                font-size: 18px !important;
+            }
+            .depth-controls {
+                margin-top: 5px !important;
+            }
+            .depth-btn {
+                padding: 8px 12px !important;
+                font-size: 14px !important;
+                margin: 2px !important;
+            }
+        }            .node text {
                 font: 12px Arial !important;
             }
             .node[data-depth="0"] text {
@@ -197,11 +219,25 @@
         @media (max-width: 480px) {
             .controls {
                 top: 5px !important;
-                left: 5px !important;
                 right: 5px !important;
-                padding: 6px !important;
+                padding: 3px !important;
+            }
+            .controls button {
+                padding: 3px 6px !important;
+                font-size: 11px !important;
+                min-width: 25px !important;
             }
             .node text {
+                font: 14px Arial !important;
+            }
+            .node[data-depth="0"] text {
+                font: bold 20px Arial !important;
+            }
+            .depth-btn {
+                padding: 6px 10px !important;
+                font-size: 12px !important;
+            }
+        }            .node text {
                 font: 10px Arial !important;
             }
             .node[data-depth="0"] text {
