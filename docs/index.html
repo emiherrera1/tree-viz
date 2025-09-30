@@ -580,7 +580,7 @@ d3.json("tree_data.json").then(data => {
     // Auto-zoom based on screen size
     const isMobile = window.innerWidth <= 768;
     const isSmallMobile = window.innerWidth <= 480;
-    const initialScale = isSmallMobile ? 0.2 : (isMobile ? 0.3 : 0.4);
+    const initialScale = isSmallMobile ? 0.3 : (isMobile ? 0.35 : 0.4);
     svg.call(zoom.transform, 
         d3.zoomIdentity
             .translate(0, 0)
@@ -590,7 +590,7 @@ d3.json("tree_data.json").then(data => {
     window.addEventListener("resize", () => {
         const isMobile = window.innerWidth <= 768;
         const isSmallMobile = window.innerWidth <= 480;
-        const newScale = isSmallMobile ? 0.2 : (isMobile ? 0.3 : 0.4);
+        const newScale = isSmallMobile ? 0.3 : (isMobile ? 0.35 : 0.4);
         svg.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(newScale));
     });    );
 });
