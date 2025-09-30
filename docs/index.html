@@ -580,19 +580,12 @@ d3.json("tree_data.json").then(data => {
     // Auto-zoom based on screen size
     const isMobile = window.innerWidth <= 768;
     const isSmallMobile = window.innerWidth <= 480;
-    const initialScale = isSmallMobile ? 0.3 : (isMobile ? 0.35 : 0.4);
+    const initialScale = 0.4;
     svg.call(zoom.transform, 
         d3.zoomIdentity
             .translate(0, 0)
             .scale(initialScale)
     
-    // Auto-adjust zoom on window resize
-    window.addEventListener("resize", () => {
-        const isMobile = window.innerWidth <= 768;
-        const isSmallMobile = window.innerWidth <= 480;
-        const newScale = isSmallMobile ? 0.3 : (isMobile ? 0.35 : 0.4);
-        svg.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(newScale));
-    });    );
 });
 </script>
 <script src="radial.js"></script>
