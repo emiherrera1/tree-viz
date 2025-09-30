@@ -182,6 +182,38 @@
             .node[data-depth="0"] text {
                 font: bold 14px Arial;
             }
+        }
+        
+        @media (max-width: 480px) {
+            .controls {
+                top: 5px;
+                right: 5px;
+                padding: 2px;
+            }
+            .controls button {
+                padding: 1px 3px;
+                font-size: 9px;
+                min-width: 12px;
+                height: 12px;
+            }
+            .node text {
+                font: 8px Arial;
+            }
+            .node[data-depth="0"] text {
+                font: bold 12px Arial;
+            }
+        }            .controls button {
+                padding: 2px 4px;
+                font-size: 10px;
+                min-width: 15px;
+                height: 15px;
+            }
+            .node text {
+                font: 10px Arial;
+            }
+            .node[data-depth="0"] text {
+                font: bold 14px Arial;
+            }
         }            .controls button {
                 padding: 5px 8px;
                 font-size: 12px;
@@ -545,12 +577,22 @@ d3.json("tree_data.json").then(data => {
         .on("mouseout", hideTooltip)
         .on("click", focusNode);
 
-    const initialScale = 0.4;
+    // Auto-zoom based on screen size
+    const isMobile = window.innerWidth <= 768;
+    const isSmallMobile = window.innerWidth <= 480;
+    const initialScale = isSmallMobile ? 0.2 : (isMobile ? 0.3 : 0.4);
     svg.call(zoom.transform, 
         d3.zoomIdentity
             .translate(0, 0)
             .scale(initialScale)
-    );
+    
+    // Auto-adjust zoom on window resize
+    window.addEventListener("resize", () => {
+        const isMobile = window.innerWidth <= 768;
+        const isSmallMobile = window.innerWidth <= 480;
+        const newScale = isSmallMobile ? 0.2 : (isMobile ? 0.3 : 0.4);
+        svg.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(newScale));
+    });    );
 });
 </script>
 <script src="radial.js"></script>
