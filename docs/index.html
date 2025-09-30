@@ -65,7 +65,33 @@
             backdrop-filter: blur(5px);
         }
         button {
-            background: white;
+        .depth-controls {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .depth-controls label {
+            color: white;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        .depth-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 4px 8px;
+            margin: 0 2px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+        .depth-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .depth-btn.active {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }            background: white;
             border: none;
             padding: 8px 15px;
             border-radius: 4px;
@@ -168,11 +194,63 @@
                 right: 20px;
             }
             .controls button {
-                padding: 4px 8px;
+        .depth-controls {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .depth-controls label {
+            color: white;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        .depth-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 4px 8px;
+            margin: 0 2px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+        .depth-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .depth-btn.active {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }                padding: 4px 8px;
                 font-size: 12px;
             }
         }            .controls button {
-                padding: 4px 8px;
+        .depth-controls {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .depth-controls label {
+            color: white;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        .depth-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 4px 8px;
+            margin: 0 2px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+        .depth-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .depth-btn.active {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }                padding: 4px 8px;
                 font-size: 12px;
             }
         }    </style>
@@ -289,7 +367,12 @@
     <button id="zoomInButton">+</button>
     <button id="zoomOutButton">−</button>
     <button id="resetButton">Reset</button>
-</div>
+    <div class="depth-controls">
+        <button id="depth1" class="depth-btn active">1-2</button>
+        <button id="depth2" class="depth-btn">1-3</button>
+        <button id="depth3" class="depth-btn">1-4</button>
+        <button id="depthAll" class="depth-btn">All</button>
+    </div></div>
 <script>
 const width = Math.min(window.innerWidth, window.innerHeight);
 const height = width;
@@ -484,7 +567,9 @@ svg.on("click", () => {
 });
 
 d3.json("tree_data.json").then(data => {
-    const root = tree(d3.hierarchy(data));
+    originalData = data; // Store original data
+    const filteredData = filterDataByDepth(data, maxDepth);
+    const root = tree(d3.hierarchy(filteredData));
 
     const links = g.append("g")
         .selectAll("path")
@@ -541,13 +626,119 @@ d3.json("tree_data.json").then(data => {
 
     const initialScale = 0.4;
     
+    // Depth control variables
+    let maxDepth = 2;
+    let originalData = null;
+    
+    // Function to filter data by depth
+    function filterDataByDepth(data, maxDepth) {
+        if (maxDepth >= 10) return data;
+        
+        function filterNode(node) {
+            if (node.depth > maxDepth) return null;
+            if (node.children) {
+                const filteredChildren = node.children.map(filterNode).filter(child => child !== null);
+                return { ...node, children: filteredChildren.length > 0 ? filteredChildren : undefined };
+            }
+            return node;
+        }
+        
+        return filterNode(data);
+    }
+    
+    // Function to update visualization with new depth
+    function updateVisualization() {
+        if (!originalData) return;
+        const filteredData = filterDataByDepth(originalData, maxDepth);
+        const root = tree(d3.hierarchy(filteredData));
+        
+        // Update links
+        const links = g.selectAll(".link")
+            .data(root.links());
+        links.exit().remove();
+        links.enter().append("path")
+            .attr("class", "link")
+            .attr("data-to-root", d => d.source.depth === 0)
+            .merge(links)
+            .attr("d", d3.linkRadial()
+                .angle(d => d.x)
+                .radius(d => d.y));
+        
+        // Update nodes
+        const nodes = g.selectAll(".node")
+            .data(root.descendants());
+        nodes.exit().remove();
+        const nodeEnter = nodes.enter().append("g")
+            .attr("class", "node")
+            .attr("data-depth", d => d.depth)
+            .attr("transform", d => `
+                rotate(${d.x * 180 / Math.PI - 90})
+                translate(${d.y},0)
+            `);
+        
+        nodeEnter.append("circle")
+            .attr("r", d => d.depth === 0 ? 0 : 1.5);
+        
+        nodeEnter.append("text")
+            .attr("dy", "0.31em")
+            .attr("x", d => {
+                if (d.depth === 0) return 0;
+                return d.x < Math.PI === !d.children ? 10 : -10;
+            })
+            .attr("text-anchor", d => {
+                if (d.depth === 0) return "middle";
+                return d.x < Math.PI === !d.children ? "start" : "end";
+            })
+            .attr("transform", d => {
+                if (d.depth === 0) return `rotate(${-1 * (d.x * 180 / Math.PI - 90)})`;
+                return d.x >= Math.PI ? "rotate(180)" : null;
+            })
+            .text(d => d.data.name)
+            .on("mouseover", showTooltip)
+            .on("mouseout", hideTooltip)
+            .on("click", focusNode);
+        
+        nodes.merge(nodeEnter)
+            .attr("transform", d => `
+                rotate(${d.x * 180 / Math.PI - 90})
+                translate(${d.y},0)
+            `);
+    }    
     // Toggle info panel
     const infoBox = document.querySelector(".info-box");
     const toggleButton = document.getElementById("toggleInfo");
     let infoVisible = true;
     
     toggleButton.addEventListener("click", () => {
-        infoVisible = !infoVisible;
+    
+    // Depth control event listeners
+    d3.select("#depth1").on("click", () => {
+        maxDepth = 2;
+        d3.selectAll(".depth-btn").classed("active", false);
+        d3.select("#depth1").classed("active", true);
+        updateVisualization();
+    });
+    
+    d3.select("#depth2").on("click", () => {
+        maxDepth = 3;
+        d3.selectAll(".depth-btn").classed("active", false);
+        d3.select("#depth2").classed("active", true);
+        updateVisualization();
+    });
+    
+    d3.select("#depth3").on("click", () => {
+        maxDepth = 4;
+        d3.selectAll(".depth-btn").classed("active", false);
+        d3.select("#depth3").classed("active", true);
+        updateVisualization();
+    });
+    
+    d3.select("#depthAll").on("click", () => {
+        maxDepth = 10;
+        d3.selectAll(".depth-btn").classed("active", false);
+        d3.select("#depthAll").classed("active", true);
+        updateVisualization();
+    });        infoVisible = !infoVisible;
         infoBox.style.display = infoVisible ? "block" : "none";
         toggleButton.textContent = infoVisible ? "☰" : "☰";
     });    svg.call(zoom.transform, 
