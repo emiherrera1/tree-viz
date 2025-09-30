@@ -4,58 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">    <style>
         body { 
-        /* Mobile responsive design */
-        @media (max-width: 768px) {
-            .controls {
-                position: fixed;
-                top: 10px;
-                left: 10px;
-                right: 10px;
-                bottom: auto;
-                width: auto;
-                max-width: none;
-                flex-direction: column;
-                gap: 5px;
-                padding: 8px;
-                z-index: 1000;
-            }
-            .node text {
-                font: 12px Arial !important;
-            }
-            .node[data-depth="0"] text {
-                font: bold 18px Arial !important;
-            }
-            .node:hover text {
-                font-size: 14px !important;
-            }
-            .depth-controls {
-                margin-top: 5px;
-            }
-            .depth-btn {
-                padding: 6px 10px;
-                font-size: 12px;
-                margin: 2px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .controls {
-                top: 5px;
-                left: 5px;
-                right: 5px;
-                padding: 6px;
-            }
-            .node text {
-                font: 10px Arial !important;
-            }
-            .node[data-depth="0"] text {
-                font: bold 16px Arial !important;
-            }
-            .depth-btn {
-                padding: 4px 8px;
-                font-size: 11px;
-            }
-        }            margin: 0;
+            margin: 0;
             background: black;
             width: 100vw;
             height: 100vh;
@@ -105,33 +54,7 @@
             stroke-opacity: 0.6;
         }
         .controls {
-    .depth-controls {
-        margin-top: 10px;
-        text-align: center;
-    }
-    .depth-controls label {
-        color: white;
-        font-size: 12px;
-        margin-right: 10px;
-    }
-    .depth-btn {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        padding: 4px 8px;
-        margin: 0 2px;
-        border-radius: 3px;
-        cursor: pointer;
-        font-size: 11px;
-        transition: all 0.2s;
-    }
-    .depth-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
-    }
-    .depth-btn.active {
-        background: #4CAF50;
-        border-color: #4CAF50;
-    }            position: fixed;
+            position: fixed;
             bottom: 20px;
             right: 20px;
             background: rgba(255, 255, 255, 0.1);
@@ -237,43 +160,6 @@
     .layer-box.selected::before {
         background: #4CAF50;
          } 
-         
-        .search-result {
-            padding: 8px 12px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-            transition: background 0.2s;
-        }
-        .search-result:hover {
-            background: #f5f5f5;
-        }
-        .search-result:last-child {
-            border-bottom: none;
-        }
-        .search-result-name {
-            font-weight: bold;
-            margin-bottom: 2px;
-        }
-        .search-result-path {
-            font-size: 12px;
-            color: #666;
-        }
-        
-        .back-button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 15px;
-            width: 100%;
-            transition: background 0.2s;
-        }
-        .back-button:hover {
-            background: #45a049;
-        }
     </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
@@ -377,13 +263,6 @@
     <button id="zoomInButton">+</button>
     <button id="zoomOutButton">−</button>
     <button id="resetButton">Reset</button>
-    <div class="depth-controls">
-        <label>Show Levels:</label>
-        <button id="depth1" class="depth-btn active">1-2</button>
-        <button id="depth2" class="depth-btn">1-3</button>
-        <button id="depth3" class="depth-btn">1-4</button>
-        <button id="depthAll" class="depth-btn">All</button>
-    </div>
 </div>
 <script>
 const width = Math.min(window.innerWidth, window.innerHeight);
@@ -391,9 +270,6 @@ const height = width;
 const radius = width / 1.3;
 
 let currentTransform = d3.zoomIdentity;
-let maxDepth = 2; // Maximum depth to show by default
-let originalData = null; // Store original data for filtering
-let allNodes = []; // Store all nodes for search
 
 const tree = d3.tree()
     .size([2 * Math.PI, radius * 0.98])
@@ -414,40 +290,7 @@ const tree = d3.tree()
             return (a.parent == b.parent ? 2.5 : 3.5);
         }
     });
-    
-    // Set up zoom control button event listeners
-    d3.select("#zoomInButton").on("click", zoomIn);
-    d3.select("#zoomOutButton").on("click", zoomOut);
-    d3.select("#resetButton").on("click", resetZoom);
-    
-    // Set up depth control event listeners
-    d3.select("#depth1").on("click", () => {
-        maxDepth = 2;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth1").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth2").on("click", () => {
-        maxDepth = 3;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth2").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth3").on("click", () => {
-        maxDepth = 4;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth3").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depthAll").classed("active", true);
-        updateVisualization();
-    });
+
 const svg = d3.select("body").append("svg")
     .attr("viewBox", [-width/2, -height/2, width, height])
     .style("background", "black");
@@ -460,40 +303,7 @@ const zoom = d3.zoom()
         currentTransform = event.transform;
         g.attr("transform", event.transform);
     });
-    
-    // Set up zoom control button event listeners
-    d3.select("#zoomInButton").on("click", zoomIn);
-    d3.select("#zoomOutButton").on("click", zoomOut);
-    d3.select("#resetButton").on("click", resetZoom);
-    
-    // Set up depth control event listeners
-    d3.select("#depth1").on("click", () => {
-        maxDepth = 2;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth1").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth2").on("click", () => {
-        maxDepth = 3;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth2").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth3").on("click", () => {
-        maxDepth = 4;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth3").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depthAll").classed("active", true);
-        updateVisualization();
-    });
+
 svg.call(zoom);
 
 function zoomIn() {
@@ -523,139 +333,6 @@ function resetZoom() {
     d3.select("#layerSummary").style("opacity", 0);
 }
 
-function filterDataByDepth(data, maxDepth) {
-    if (!data || !data.children) return data;
-    
-    const filtered = {
-        name: data.name,
-        children: data.children.map(child => {
-            if (child.depth >= maxDepth) {
-                return { name: child.name, depth: child.depth };
-            }
-            return filterDataByDepth(child, maxDepth);
-        })
-    };
-    return filtered;
-}
-
-function updateVisualization() {
-    if (!originalData) return;
-    
-    const filteredData = filterDataByDepth(originalData, maxDepth);
-    const root = tree(d3.hierarchy(filteredData));
-    
-    // Update all nodes for search
-    allNodes = root.descendants();
-    
-    // Update links
-    const links = g.selectAll(".link")
-        .data(root.links());
-    
-    links.exit().remove();
-    
-    const linksEnter = links.enter()
-        .append("path")
-        .attr("class", "link")
-        .attr("data-to-root", d => d.source.depth === 0);
-    
-    links.merge(linksEnter)
-        .attr("d", d3.linkRadial()
-            .angle(d => d.x)
-            .radius(d => d.y));
-    
-    // Update nodes
-    const nodes = g.selectAll(".node")
-        .data(root.descendants());
-    
-    nodes.exit().remove();
-    
-    const nodesEnter = nodes.enter()
-        .append("g")
-        .attr("class", "node")
-        .attr("data-depth", d => d.depth)
-        .attr("transform", d => `
-            rotate(${d.x * 180 / Math.PI - 90})
-            translate(${d.y},0)
-        `);
-    
-    nodes.merge(nodesEnter)
-        .attr("transform", d => `
-            rotate(${d.x * 180 / Math.PI - 90})
-            translate(${d.y},0)
-        `);
-    
-    nodes.each(function(d) {
-        d.nodeElement = this;
-    });
-    
-    // Update circles
-    const circles = nodes.selectAll("circle")
-        .data(d => [d]);
-    
-    circles.exit().remove();
-    
-    const circlesEnter = circles.enter()
-        .append("circle")
-        .attr("r", d => d.depth === 0 ? 0 : 1.5);
-    
-    circles.merge(circlesEnter)
-        .attr("r", d => d.depth === 0 ? 0 : 1.5);
-    
-    // Update text
-    const texts = nodes.selectAll("text")
-        .data(d => [d]);
-    
-    texts.exit().remove();
-    
-    const textsEnter = texts.enter()
-        .append("text")
-        .attr("dy", "0.31em")
-        .attr("x", d => {
-            if (d.depth === 0) {
-                return 0;
-            }
-            return d.x < Math.PI === !d.children ? 10 : -10;
-        })
-        .attr("text-anchor", d => {
-            if (d.depth === 0) {
-                return "middle";
-            }
-            return d.x < Math.PI ? "start" : "end";
-        })
-        .style("font-size", d => {
-            if (d.depth === 0) return "16px";
-            if (d.depth === 1) return "12px";
-            if (d.depth === 2) return "10px";
-            return "8px";
-        })
-        .text(d => d.data.name);
-    
-    texts.merge(textsEnter)
-        .attr("x", d => {
-            if (d.depth === 0) {
-                return 0;
-            }
-            return d.x < Math.PI === !d.children ? 10 : -10;
-        })
-        .attr("text-anchor", d => {
-            if (d.depth === 0) {
-                return "middle";
-            }
-            return d.x < Math.PI ? "start" : "end";
-        })
-        .style("font-size", d => {
-            if (d.depth === 0) return "16px";
-            if (d.depth === 1) return "12px";
-            if (d.depth === 2) return "10px";
-            return "8px";
-        })
-        .text(d => d.data.name);
-    
-    // Re-attach event listeners
-    nodes.on("mouseover", showTooltip)
-        .on("mouseout", hideTooltip)
-        .on("click", focusNode);
-}
 function clearSelection() {
     d3.selectAll(".node-selected").classed("node-selected", false);
     d3.selectAll(".link-selected").classed("link-selected", false);
@@ -673,7 +350,58 @@ function highlightPathToRoot(node) {
             .classed("path-highlight", true);
         current = current.parent;
     }
-    d3.select(current.nodeElement).classed("node-highlight", true);
+        /* Mobile responsive design */
+        @media (max-width: 768px) {
+            .controls {
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                bottom: auto;
+                width: auto;
+                max-width: none;
+                flex-direction: column;
+                gap: 5px;
+                padding: 8px;
+                z-index: 1000;
+            }
+            .node text {
+                font: 12px Arial !important;
+            }
+            .node[data-depth="0"] text {
+                font: bold 18px Arial !important;
+            }
+            .node:hover text {
+                font-size: 14px !important;
+            }
+            .depth-controls {
+                margin-top: 5px;
+            }
+            .depth-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+                margin: 2px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .controls {
+                top: 5px;
+                left: 5px;
+                right: 5px;
+                padding: 6px;
+            }
+            .node text {
+                font: 10px Arial !important;
+            }
+            .node[data-depth="0"] text {
+                font: bold 16px Arial !important;
+            }
+            .depth-btn {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+        }    d3.select(current.nodeElement).classed("node-highlight", true);
 }
 
 function showTooltip(event, d) {
@@ -699,26 +427,6 @@ function hideTooltip() {
     d3.selectAll(".node").classed("node-highlight", false);
 }
 
-function goBackToFullView() {
-    // Reset zoom to original view
-    svg.transition()
-        .duration(1000)
-        .ease(d3.easeQuadOut)
-        .call(zoom.transform, 
-            d3.zoomIdentity
-                .translate(0, 0)
-                .scale(0.4)
-        );
-    
-    // Clear all selections and highlights
-    clearSelection();
-    d3.selectAll(".link").classed("path-highlight", false);
-    d3.selectAll(".node").classed("node-highlight", false);
-    
-    // Hide the layer summary
-    d3.select("#layerSummary").style("opacity", 0);
-}
-
 function focusNode(event, d) {
     event.stopPropagation();
 
@@ -736,8 +444,59 @@ function focusNode(event, d) {
             .classed("link-selected", true);
         current = current.parent;
     }
-
-    // Show layer summary with back button
+        /* Mobile responsive design */
+        @media (max-width: 768px) {
+            .controls {
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                bottom: auto;
+                width: auto;
+                max-width: none;
+                flex-direction: column;
+                gap: 5px;
+                padding: 8px;
+                z-index: 1000;
+            }
+            .node text {
+                font: 12px Arial !important;
+            }
+            .node[data-depth="0"] text {
+                font: bold 18px Arial !important;
+            }
+            .node:hover text {
+                font-size: 14px !important;
+            }
+            .depth-controls {
+                margin-top: 5px;
+            }
+            .depth-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+                margin: 2px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .controls {
+                top: 5px;
+                left: 5px;
+                right: 5px;
+                padding: 6px;
+            }
+            .node text {
+                font: 10px Arial !important;
+            }
+            .node[data-depth="0"] text {
+                font: bold 16px Arial !important;
+            }
+            .depth-btn {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+        }
+    // Show layer summary
     const summary = d3.select("#layerSummary");
     let summaryHtml = `<strong>Path to ${d.data.name}:</strong><br>`;
     
@@ -747,7 +506,58 @@ function focusNode(event, d) {
         path.unshift(current);
         current = current.parent;
     }
-    
+        /* Mobile responsive design */
+        @media (max-width: 768px) {
+            .controls {
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                bottom: auto;
+                width: auto;
+                max-width: none;
+                flex-direction: column;
+                gap: 5px;
+                padding: 8px;
+                z-index: 1000;
+            }
+            .node text {
+                font: 12px Arial !important;
+            }
+            .node[data-depth="0"] text {
+                font: bold 18px Arial !important;
+            }
+            .node:hover text {
+                font-size: 14px !important;
+            }
+            .depth-controls {
+                margin-top: 5px;
+            }
+            .depth-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+                margin: 2px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .controls {
+                top: 5px;
+                left: 5px;
+                right: 5px;
+                padding: 6px;
+            }
+            .node text {
+                font: 10px Arial !important;
+            }
+            .node[data-depth="0"] text {
+                font: bold 16px Arial !important;
+            }
+            .depth-btn {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+        }    
     path.forEach((node, i) => {
         const isLastLayer = i === path.length - 1;  // Check if it's the clicked node's layer
         summaryHtml += `
@@ -757,46 +567,9 @@ function focusNode(event, d) {
         `;
     });
     
-    // Set up zoom control button event listeners
-    d3.select("#zoomInButton").on("click", zoomIn);
-    d3.select("#zoomOutButton").on("click", zoomOut);
-    d3.select("#resetButton").on("click", resetZoom);
-    
-    // Set up depth control event listeners
-    d3.select("#depth1").on("click", () => {
-        maxDepth = 2;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth1").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth2").on("click", () => {
-        maxDepth = 3;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth2").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth3").on("click", () => {
-        maxDepth = 4;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth3").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depthAll").classed("active", true);
-        updateVisualization();
-    });    
-    // Add back button
-    summaryHtml += `<button class="back-button" onclick="goBackToFullView()">← Back to Full View</button>`;
-    
     summary
         .html(summaryHtml)
-        .style("opacity", 1)
-        .style("pointer-events", "auto"); // Enable pointer events for the back button
+        .style("opacity", 1);
 
     // Improved zoom to node
     const scale = 4;
@@ -831,125 +604,6 @@ function focusNode(event, d) {
         );
 }
 
-// Search functionality
-function getNodePath(node) {
-    const path = [];
-    let current = node;
-    while (current) {
-        path.unshift(current.data.name);
-        current = current.parent;
-    }
-    return path.join(" → ");
-}
-
-function searchNodes(query) {
-    if (!query.trim()) {
-        d3.select("#searchResults").style("display", "none");
-        return;
-    }
-    
-    const searchTerm = query.toLowerCase();
-    const matches = allNodes.filter(node => 
-        node.data.name.toLowerCase().includes(searchTerm)
-    ).slice(0, 10); // Limit to 10 results
-    
-    const resultsList = d3.select("#resultsList");
-    resultsList.selectAll("*").remove();
-    
-    if (matches.length === 0) {
-        resultsList.append("div")
-            .attr("class", "search-result")
-            .style("color", "#999")
-            .text("No results found");
-    } else {
-        matches.forEach(node => {
-            const result = resultsList.append("div")
-                .attr("class", "search-result")
-                .on("click", () => {
-                    focusNode({ stopPropagation: () => {} }, node);
-                    d3.select("#searchResults").style("display", "none");
-                    d3.select("#searchBox").property("value", "");
-                });
-    
-    // Set up zoom control button event listeners
-    d3.select("#zoomInButton").on("click", zoomIn);
-    d3.select("#zoomOutButton").on("click", zoomOut);
-    d3.select("#resetButton").on("click", resetZoom);
-    
-    // Set up depth control event listeners
-    d3.select("#depth1").on("click", () => {
-        maxDepth = 2;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth1").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth2").on("click", () => {
-        maxDepth = 3;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth2").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth3").on("click", () => {
-        maxDepth = 4;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth3").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depthAll").classed("active", true);
-        updateVisualization();
-    });                
-            result.append("div")
-                .attr("class", "search-result-name")
-                .text(node.data.name);
-                
-            result.append("div")
-                .attr("class", "search-result-path")
-                .text(getNodePath(node));
-        });
-    
-    // Set up zoom control button event listeners
-    d3.select("#zoomInButton").on("click", zoomIn);
-    d3.select("#zoomOutButton").on("click", zoomOut);
-    d3.select("#resetButton").on("click", resetZoom);
-    
-    // Set up depth control event listeners
-    d3.select("#depth1").on("click", () => {
-        maxDepth = 2;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth1").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth2").on("click", () => {
-        maxDepth = 3;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth2").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth3").on("click", () => {
-        maxDepth = 4;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth3").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depthAll").classed("active", true);
-        updateVisualization();
-    });    }
-    
-    d3.select("#searchResults").style("display", "block");
-}
-
 // Hide summary and clear selection when clicking empty space
 svg.on("click", () => {
     clearSelection();
@@ -957,12 +611,7 @@ svg.on("click", () => {
 });
 
 d3.json("tree_data.json").then(data => {
-    originalData = data; // Store original data
-    const filteredData = filterDataByDepth(data, maxDepth);
-    const root = tree(d3.hierarchy(filteredData));
-    
-    // Store all nodes for search
-    allNodes = root.descendants();
+    const root = tree(d3.hierarchy(data));
 
     const links = g.append("g")
         .selectAll("path")
@@ -988,40 +637,7 @@ d3.json("tree_data.json").then(data => {
     nodes.each(function(d) {
         d.nodeElement = this;
     });
-    
-    // Set up zoom control button event listeners
-    d3.select("#zoomInButton").on("click", zoomIn);
-    d3.select("#zoomOutButton").on("click", zoomOut);
-    d3.select("#resetButton").on("click", resetZoom);
-    
-    // Set up depth control event listeners
-    d3.select("#depth1").on("click", () => {
-        maxDepth = 2;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth1").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth2").on("click", () => {
-        maxDepth = 3;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth2").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth3").on("click", () => {
-        maxDepth = 4;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth3").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depthAll").classed("active", true);
-        updateVisualization();
-    });
+
     nodes.append("circle")
         .attr("r", d => d.depth === 0 ? 0 : 1.5);
 
@@ -1056,171 +672,8 @@ d3.json("tree_data.json").then(data => {
             .translate(0, 0)
             .scale(initialScale)
     );
-    
-    // Set up search event listeners
-    const searchBox = d3.select("#searchBox");
-    const searchButton = d3.select("#searchButton");
-    
-    searchBox.on("input", function() {
-        searchNodes(this.value);
-    });
-    
-    // Set up zoom control button event listeners
-    d3.select("#zoomInButton").on("click", zoomIn);
-    d3.select("#zoomOutButton").on("click", zoomOut);
-    d3.select("#resetButton").on("click", resetZoom);
-    
-    // Set up depth control event listeners
-    d3.select("#depth1").on("click", () => {
-        maxDepth = 2;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth1").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth2").on("click", () => {
-        maxDepth = 3;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth2").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth3").on("click", () => {
-        maxDepth = 4;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth3").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depthAll").classed("active", true);
-        updateVisualization();
-    });    
-    searchBox.on("keydown", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            searchNodes(this.value);
-        }
-        if (event.key === "Escape") {
-            d3.select("#searchResults").style("display", "none");
-            this.blur();
-        }
-    });
-    
-    // Set up zoom control button event listeners
-    d3.select("#zoomInButton").on("click", zoomIn);
-    d3.select("#zoomOutButton").on("click", zoomOut);
-    d3.select("#resetButton").on("click", resetZoom);
-    
-    // Set up depth control event listeners
-    d3.select("#depth1").on("click", () => {
-        maxDepth = 2;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth1").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth2").on("click", () => {
-        maxDepth = 3;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth2").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth3").on("click", () => {
-        maxDepth = 4;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth3").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depthAll").classed("active", true);
-        updateVisualization();
-    });    
-    searchButton.on("click", function() {
-        const query = searchBox.property("value");
-        searchNodes(query);
-    });
-    
-    // Set up zoom control button event listeners
-    d3.select("#zoomInButton").on("click", zoomIn);
-    d3.select("#zoomOutButton").on("click", zoomOut);
-    d3.select("#resetButton").on("click", resetZoom);
-    
-    // Set up depth control event listeners
-    d3.select("#depth1").on("click", () => {
-        maxDepth = 2;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth1").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth2").on("click", () => {
-        maxDepth = 3;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth2").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth3").on("click", () => {
-        maxDepth = 4;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth3").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depthAll").classed("active", true);
-        updateVisualization();
-    });    
-    // Hide search results when clicking outside
-    document.addEventListener("click", function(event) {
-        const searchContainer = document.querySelector(".info-box");
-        if (!searchContainer.contains(event.target)) {
-            d3.select("#searchResults").style("display", "none");
-        }
-    });
-    
-    // Set up zoom control button event listeners
-    d3.select("#zoomInButton").on("click", zoomIn);
-    d3.select("#zoomOutButton").on("click", zoomOut);
-    d3.select("#resetButton").on("click", resetZoom);
-    
-    // Set up depth control event listeners
-    d3.select("#depth1").on("click", () => {
-        maxDepth = 2;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth1").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth2").on("click", () => {
-        maxDepth = 3;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth2").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depth3").on("click", () => {
-        maxDepth = 4;
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depth3").classed("active", true);
-        updateVisualization();
-    });
-    
-    d3.select("#depthAll").on("click", () => {
-        maxDepth = 10; // Show all levels
-        d3.selectAll(".depth-btn").classed("active", false);
-        d3.select("#depthAll").classed("active", true);
-        updateVisualization();
-    });});
+});
 </script>
+<script src="radial.js"></script>
 </body>
 </html>
