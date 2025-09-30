@@ -577,14 +577,11 @@ d3.json("tree_data.json").then(data => {
         .on("mouseout", hideTooltip)
         .on("click", focusNode);
 
-    // Auto-zoom based on screen size
-    const isMobile = window.innerWidth <= 768;
-    const isSmallMobile = window.innerWidth <= 480;
     const initialScale = 0.4;
     svg.call(zoom.transform, 
         d3.zoomIdentity
             .translate(0, 0)
-            .scale(initialScale)
+            .scale(initialScale));
     
 });
 </script>
