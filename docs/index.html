@@ -160,7 +160,58 @@
     .layer-box.selected::before {
         background: #4CAF50;
          } 
-    </style>
+        /* Mobile-only responsive design - does not affect desktop */
+        @media (max-width: 768px) {
+            .controls {
+                position: fixed !important;
+                top: 10px !important;
+                left: 10px !important;
+                right: 10px !important;
+                bottom: auto !important;
+                width: auto !important;
+                max-width: none !important;
+                flex-direction: column !important;
+                gap: 5px !important;
+                padding: 8px !important;
+                z-index: 1000 !important;
+            }
+            .node text {
+                font: 12px Arial !important;
+            }
+            .node[data-depth="0"] text {
+                font: bold 18px Arial !important;
+            }
+            .node:hover text {
+                font-size: 14px !important;
+            }
+            .depth-controls {
+                margin-top: 5px !important;
+            }
+            .depth-btn {
+                padding: 6px 10px !important;
+                font-size: 12px !important;
+                margin: 2px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .controls {
+                top: 5px !important;
+                left: 5px !important;
+                right: 5px !important;
+                padding: 6px !important;
+            }
+            .node text {
+                font: 10px Arial !important;
+            }
+            .node[data-depth="0"] text {
+                font: bold 16px Arial !important;
+            }
+            .depth-btn {
+                padding: 4px 8px !important;
+                font-size: 11px !important;
+            }
+        }    </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
@@ -350,58 +401,7 @@ function highlightPathToRoot(node) {
             .classed("path-highlight", true);
         current = current.parent;
     }
-        /* Mobile responsive design */
-        @media (max-width: 768px) {
-            .controls {
-                position: fixed;
-                top: 10px;
-                left: 10px;
-                right: 10px;
-                bottom: auto;
-                width: auto;
-                max-width: none;
-                flex-direction: column;
-                gap: 5px;
-                padding: 8px;
-                z-index: 1000;
-            }
-            .node text {
-                font: 12px Arial !important;
-            }
-            .node[data-depth="0"] text {
-                font: bold 18px Arial !important;
-            }
-            .node:hover text {
-                font-size: 14px !important;
-            }
-            .depth-controls {
-                margin-top: 5px;
-            }
-            .depth-btn {
-                padding: 6px 10px;
-                font-size: 12px;
-                margin: 2px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .controls {
-                top: 5px;
-                left: 5px;
-                right: 5px;
-                padding: 6px;
-            }
-            .node text {
-                font: 10px Arial !important;
-            }
-            .node[data-depth="0"] text {
-                font: bold 16px Arial !important;
-            }
-            .depth-btn {
-                padding: 4px 8px;
-                font-size: 11px;
-            }
-        }    d3.select(current.nodeElement).classed("node-highlight", true);
+    d3.select(current.nodeElement).classed("node-highlight", true);
 }
 
 function showTooltip(event, d) {
@@ -444,58 +444,7 @@ function focusNode(event, d) {
             .classed("link-selected", true);
         current = current.parent;
     }
-        /* Mobile responsive design */
-        @media (max-width: 768px) {
-            .controls {
-                position: fixed;
-                top: 10px;
-                left: 10px;
-                right: 10px;
-                bottom: auto;
-                width: auto;
-                max-width: none;
-                flex-direction: column;
-                gap: 5px;
-                padding: 8px;
-                z-index: 1000;
-            }
-            .node text {
-                font: 12px Arial !important;
-            }
-            .node[data-depth="0"] text {
-                font: bold 18px Arial !important;
-            }
-            .node:hover text {
-                font-size: 14px !important;
-            }
-            .depth-controls {
-                margin-top: 5px;
-            }
-            .depth-btn {
-                padding: 6px 10px;
-                font-size: 12px;
-                margin: 2px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .controls {
-                top: 5px;
-                left: 5px;
-                right: 5px;
-                padding: 6px;
-            }
-            .node text {
-                font: 10px Arial !important;
-            }
-            .node[data-depth="0"] text {
-                font: bold 16px Arial !important;
-            }
-            .depth-btn {
-                padding: 4px 8px;
-                font-size: 11px;
-            }
-        }
+
     // Show layer summary
     const summary = d3.select("#layerSummary");
     let summaryHtml = `<strong>Path to ${d.data.name}:</strong><br>`;
@@ -506,58 +455,7 @@ function focusNode(event, d) {
         path.unshift(current);
         current = current.parent;
     }
-        /* Mobile responsive design */
-        @media (max-width: 768px) {
-            .controls {
-                position: fixed;
-                top: 10px;
-                left: 10px;
-                right: 10px;
-                bottom: auto;
-                width: auto;
-                max-width: none;
-                flex-direction: column;
-                gap: 5px;
-                padding: 8px;
-                z-index: 1000;
-            }
-            .node text {
-                font: 12px Arial !important;
-            }
-            .node[data-depth="0"] text {
-                font: bold 18px Arial !important;
-            }
-            .node:hover text {
-                font-size: 14px !important;
-            }
-            .depth-controls {
-                margin-top: 5px;
-            }
-            .depth-btn {
-                padding: 6px 10px;
-                font-size: 12px;
-                margin: 2px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .controls {
-                top: 5px;
-                left: 5px;
-                right: 5px;
-                padding: 6px;
-            }
-            .node text {
-                font: 10px Arial !important;
-            }
-            .node[data-depth="0"] text {
-                font: bold 16px Arial !important;
-            }
-            .depth-btn {
-                padding: 4px 8px;
-                font-size: 11px;
-            }
-        }    
+    
     path.forEach((node, i) => {
         const isLastLayer = i === path.length - 1;  // Check if it's the clicked node's layer
         summaryHtml += `
