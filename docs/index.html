@@ -179,7 +179,18 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
-<div class="info-box" style="
+<button id="toggleInfo" style="
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 101;
+    font-size: 14px;
+">☰</button><div class="info-box" style="
     position: absolute;
     top: 20px;
     left: 20px;
@@ -529,7 +540,17 @@ d3.json("tree_data.json").then(data => {
         .on("click", focusNode);
 
     const initialScale = 0.4;
-    svg.call(zoom.transform, 
+    
+    // Toggle info panel
+    const infoBox = document.querySelector(".info-box");
+    const toggleButton = document.getElementById("toggleInfo");
+    let infoVisible = true;
+    
+    toggleButton.addEventListener("click", () => {
+        infoVisible = !infoVisible;
+        infoBox.style.display = infoVisible ? "block" : "none";
+        toggleButton.textContent = infoVisible ? "☰" : "☰";
+    });    svg.call(zoom.transform, 
         d3.zoomIdentity
             .translate(0, 0)
             .scale(initialScale)
