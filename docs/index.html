@@ -160,69 +160,16 @@
     .layer-box.selected::before {
         background: #4CAF50;
          } 
-        /* Mobile responsive - clean and simple */
+        /* Minimal mobile adjustments */
         @media (max-width: 768px) {
             .controls {
                 position: fixed;
                 top: 10px;
                 right: 10px;
-                flex-direction: row;
-                gap: 2px;
-                padding: 3px;
             }
             .controls button {
-                padding: 2px 4px;
-                font-size: 10px;
-                min-width: 15px;
-                height: 15px;
-            }
-            .node text {
-                font: 10px Arial;
-            }
-            .node[data-depth="0"] text {
-                font: bold 14px Arial;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .controls {
-                top: 5px;
-                right: 5px;
-                padding: 2px;
-            }
-            .controls button {
-                padding: 1px 3px;
-                font-size: 9px;
-                min-width: 12px;
-                height: 12px;
-            }
-            .node text {
-                font: 8px Arial;
-            }
-            .node[data-depth="0"] text {
-                font: bold 12px Arial;
-            }
-        }            .controls button {
-                padding: 2px 4px;
-                font-size: 10px;
-                min-width: 15px;
-                height: 15px;
-            }
-            .node text {
-                font: 10px Arial;
-            }
-            .node[data-depth="0"] text {
-                font: bold 14px Arial;
-            }
-        }            .controls button {
-                padding: 5px 8px;
+                padding: 4px 8px;
                 font-size: 12px;
-            }
-            .node text {
-                font: 16px Arial;
-            }
-            .node[data-depth="0"] text {
-                font: bold 22px Arial;
             }
         }    </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -581,8 +528,8 @@ d3.json("tree_data.json").then(data => {
     svg.call(zoom.transform, 
         d3.zoomIdentity
             .translate(0, 0)
-            .scale(initialScale));
-    
+            .scale(initialScale)
+    );
 });
 </script>
 <script src="radial.js"></script>
