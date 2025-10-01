@@ -15,11 +15,18 @@
             font-family: Arial, sans-serif;
         }
         svg {
-            width: 100%;
+            /* Hardware acceleration */
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;            width: 100%;
             height: 100%;
         }
         .node text {
-            font: 8px Arial;
+            pointer-events: none;
+            will-change: transform;
+        }
+        .node {
+            will-change: transform;            font: 8px Arial;
             fill: white;
             letter-spacing: 0.5px;
             user-select: none;
@@ -299,8 +306,18 @@ const g = svg.append("g");
 
 const zoom = d3.zoom()
     .scaleExtent([0.1, 8])
+    .filter((event) => {
+        // Optimize touch events
+        if (event.type === "wheel") {
+            event.preventDefault();
+            return !event.ctrlKey;
+        }
+        return true;
+    })
+    .scaleExtent([0.1, 8])
     .on("zoom", (event) => {
-        currentTransform = event.transform;
+        // Use transform3d for better performance
+        requestAnimationFrame(() => {        currentTransform = event.transform;
         g.attr("transform", event.transform);
     });
 
