@@ -514,7 +514,11 @@ d3.json("tree_data.json").then(data => {
         .on("click", focusNode);
 
     const initialScale = 0.4;
-    svg.call(zoom.transform, 
+    
+    // Set up zoom button event listeners
+    document.getElementById("zoomInButton").addEventListener("click", zoomIn);
+    document.getElementById("zoomOutButton").addEventListener("click", zoomOut);
+    document.getElementById("resetButton").addEventListener("click", resetZoom);    svg.call(zoom.transform, 
         d3.zoomIdentity
             .translate(0, 0)
             .scale(initialScale)
